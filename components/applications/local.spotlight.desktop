@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Spotlight Search
+Exec=@HOME@/.local/bin/spotlight-search
+Icon=system-search
+NoDisplay=true
+X-KDE-Shortcuts=Meta+X

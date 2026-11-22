@@ -1,0 +1,1 @@
+{"KPlugin":{"Id":"launchpad-smooth","Name":"Launchpad Smooth Opening","Description":"Soft fade and zoom for the application dashboard","Version":"1.0","License":"MIT","Category":"Appearance"},"KPackageStructure":"KWin/Effect","X-Plasma-API":"javascript","X-Plasma-MainScript":"code/main.js","X-KDE-Ordering":60}

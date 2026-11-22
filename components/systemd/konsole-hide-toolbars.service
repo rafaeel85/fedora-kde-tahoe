@@ -1,0 +1,5 @@
+[Unit]
+Description=Hide Konsole toolbars in saved window state
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/konsole-hide-toolbars

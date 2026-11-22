@@ -1,0 +1,8 @@
+[Sound Theme]
+Name=Tahoe Glass
+Comment=Original soft glass-style sounds
+Inherits=freedesktop
+Directories=stereo
+
+[stereo]
+OutputProfile=stereo

@@ -1,0 +1,6 @@
+[Unit]
+Description=Keep Konsole toolbars hidden (Terminal.app look)
+[Path]
+PathChanged=%h/.local/state/konsolestaterc
+[Install]
+WantedBy=default.target

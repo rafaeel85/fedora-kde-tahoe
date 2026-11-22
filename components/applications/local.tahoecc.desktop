@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Denetim Merkezi
+Exec=@HOME@/.local/bin/tahoe-cc
+Icon=preferences-system
+NoDisplay=true

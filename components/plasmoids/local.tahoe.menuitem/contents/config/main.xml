@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0">
+  <kcfgfile name=""/>
+  <group name="General">
+    <entry name="kind" type="String"><default>clock</default></entry>
+    <entry name="weatherSource" type="String"><default>bbcukmet|weather|London, Greater London, GB|2643743</default></entry>
+    <entry name="showPercent" type="Bool"><default>false</default></entry>
+  </group>
+</kcfg>

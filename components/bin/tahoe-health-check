@@ -1,0 +1,152 @@
+#!/usr/bin/env bash
+# Tahoe desktop safety net (written before the Fedora 45 upgrade).
+#
+#   tahoe-health-check --sync   fast, runs at every login BEFORE plasmashell:
+#                               re-links the shell-package override so new Plasma files are picked up,
+#                               and turns the lock/logout overrides off automatically when Plasma's
+#                               major.minor version changed (until a --full check approves them again).
+#   tahoe-health-check --full   run after an upgrade (or any time): tests every custom piece,
+#                               disables only what is broken, prints what to do.
+set -u
+SYS=/usr/share/plasma/shells/org.kde.plasma.desktop
+USR=$HOME/.local/share/plasma/shells/org.kde.plasma.desktop
+KEEP=$HOME/.local/share/tahoe-overrides          # our lockscreen/ and logout/ live here
+STATE=$HOME/.local/state/tahoe-health
+mkdir -p "$STATE" "$KEEP"
+log() { echo "[tahoe] $*"; }
+plasma_ver() { rpm -q --qf '%{VERSION}' plasma-workspace 2>/dev/null | cut -d. -f1,2; }
+
+# keep the real copies outside the override dir so they can be switched on/off
+for d in lockscreen logout; do
+  if [ -d "$USR/contents/$d" ] && [ ! -L "$USR/contents/$d" ] && [ ! -e "$KEEP/$d" ]; then
+    cp -r "$USR/contents/$d" "$KEEP/$d"
+  fi
+done
+
+# KPackage rejects symlinks that leave the package ("Path traversal"), so the
+# override must be a real directory inside the package: copy it in.
+enable_override()  { rm -rf "$USR/contents/$1"; cp -r "$KEEP/$1" "$USR/contents/$1"; }
+disable_override() { rm -rf "$USR/contents/$1"; ln -sfn "$SYS/contents/$1" "$USR/contents/$1"; }
+
+sync_links() {
+  [ -d "$SYS" ] || return
+  mkdir -p "$USR/contents"
+  ln -sfn "$SYS/metadata.json" "$USR/metadata.json"
+  for f in "$SYS"/contents/*; do
+    n=$(basename "$f")
+    case "$n" in lockscreen|logout) continue ;; esac
+    ln -sfn "$f" "$USR/contents/$n"
+  done
+  # drop links to files Plasma removed
+  for l in "$USR"/contents/*; do
+    [ -L "$l" ] && [ ! -e "$l" ] && rm -f "$l"
+  done
+  for d in lockscreen logout; do
+    [ -e "$USR/contents/$d" ] || enable_override "$d"
+  done
+}
+
+if [ "${1:-}" = "--sync" ]; then
+  sync_links
+  cur=$(plasma_ver); last=$(cat "$STATE/approved-plasma" 2>/dev/null || echo "")
+  if [ -n "$last" ] && [ "$cur" != "$last" ]; then
+    # Plasma changed: use KDE's own lock/logout screens until --full approves ours
+    disable_override lockscreen; disable_override logout
+    echo "$cur" > "$STATE/pending-plasma"
+    log "Plasma $last -> $cur: Tahoe lock/logout paused until 'tahoe-health-check --full'"
+  fi
+  exit 0
+fi
+
+# ------------------------------------------------------------------ full check
+problems=0
+sync_links
+since=$(date '+%Y-%m-%d %H:%M:%S')
+
+# 1) lock screen
+enable_override lockscreen
+timeout 6 /usr/libexec/kscreenlocker_greet --testing >"$STATE/lock.log" 2>&1 &
+sleep 4; pkill -x kscreenlocker_g 2>/dev/null; wait 2>/dev/null
+if journalctl --user --since "$since" -o cat 2>/dev/null | cat - "$STATE/lock.log" \
+   | grep -qiE 'Path traversal|falling back to built-in|lockscreen QML outdated|lockscreen/.*(error|unavailable|is not a type|Cannot assign)'; then
+  disable_override lockscreen; problems=1
+  log "LOCK SCREEN: Tahoe version failed with this Plasma -> switched back to KDE's (see $STATE/lock.log)"
+else
+  log "lock screen: OK"
+fi
+
+# 2) logout / shutdown dialog
+enable_override logout
+since=$(date '+%Y-%m-%d %H:%M:%S')
+timeout 5 /usr/libexec/ksmserver-logout-greeter --windowed >"$STATE/logout.log" 2>&1 &
+sleep 3; pkill -x ksmserver-logou 2>/dev/null; wait 2>/dev/null
+if journalctl --user --since "$since" -o cat 2>/dev/null | cat - "$STATE/logout.log" \
+   | grep -qiE 'Path traversal|Failed to load|logout/.*(error|unavailable|is not a type|Expected token|Cannot assign|ReferenceError)'; then
+  disable_override logout; problems=1
+  log "LOGOUT DIALOG: Tahoe version failed -> switched back to KDE's (see $STATE/logout.log)"
+else
+  log "logout dialog: OK"
+fi
+
+# 3) plasmoids loaded by plasmashell since it last started
+ps_start=$(systemctl --user show plasma-plasmashell.service -p ActiveEnterTimestamp --value)
+bad=$(journalctl --user --since "${ps_start:-1 hour ago}" -o cat 2>/dev/null | grep -oE 'error when loading applet "local\.[a-z.]+"|error when loading applet "org\.vicko\.[a-z.]+"' | sort -u)
+if [ -n "$bad" ]; then
+  problems=1; log "PLASMOIDS failing: $bad"
+  if echo "$bad" | grep -q 'local.tahoe.notifications'; then
+    log "  -> notifications would be lost: switching back to KDE notifications applet"
+    systemctl --user stop plasma-plasmashell.service; sleep 1
+    sed -i 's/^plugin=local\.tahoe\.notifications$/plugin=org.kde.plasma.notifications/; /^extraItems=/s/local\.tahoe\.notifications/org.kde.plasma.notifications/' \
+      "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
+    systemctl --user start plasma-plasmashell.service
+  fi
+else
+  log "plasmoids: OK"
+fi
+busctl --user status org.freedesktop.Notifications >/dev/null 2>&1 && log "notification server: OK" || { problems=1; log "NOTIFICATION SERVER missing"; }
+
+# 3b) Dock: WaveTask has a COMPILED QML plugin in ~/.local/lib/qt6/qml (built against Qt/KF6 of Fedora 44).
+#     If it no longer loads after an upgrade the dock would vanish -> swap to KDE's icon task manager.
+AR="$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
+if grep -q '^plugin=org.vicko.wavetask$' "$AR"; then
+  if QML_IMPORT_PATH="$HOME/.local/lib/qt6/qml" QT_QPA_PLATFORM=offscreen timeout 20 /usr/bin/python3 -I -c '
+import sys
+from PySide6.QtGui import QGuiApplication
+from PySide6.QtQml import QQmlEngine, QQmlComponent
+a = QGuiApplication(sys.argv); e = QQmlEngine()
+c = QQmlComponent(e); c.setData(b"import QtQuick\nimport org.vicko.wavetask\nItem{}", "t.qml")
+sys.exit(0 if c.status() == QQmlComponent.Ready else (print(c.errorString()) or 1))' >"$STATE/wavetask.log" 2>&1; then
+    log "dock (WaveTask native plugin): OK"
+  else
+    problems=1; log "DOCK: WaveTask plugin fails on this Qt/KF6 (see $STATE/wavetask.log) -> switched dock to KDE icon task manager"
+    cp "$AR" "$STATE/appletsrc.before-wavetask-fallback"
+    systemctl --user stop plasma-plasmashell.service; sleep 1
+    sed -i 's/^plugin=org\.vicko\.wavetask$/plugin=org.kde.plasma.icontasks/' "$AR"
+    systemctl --user start plasma-plasmashell.service
+  fi
+fi
+
+# 4) helper apps
+for s in tahoe-cc tahoe-menus tahoe-osd spotlight-search; do
+  if systemctl --user is-active --quiet "$s"; then log "$s: OK"
+  else problems=1; log "${s^^}: not running -> journalctl --user -u $s"; fi
+done
+
+# 5) KWin pieces
+gdbus call --session -d org.kde.KWin -o /Scripting -m org.kde.kwin.Scripting.isScriptLoaded spotlight-center 2>/dev/null | grep -q true \
+  && log "kwin script: OK" || { problems=1; log "KWIN SCRIPT spotlight-center not loaded"; }
+
+# 6) Kirigami segmented tabs (system files are replaced by every kf6-kirigami update)
+K=/usr/lib64/qt6/qml/org/kde/kirigami/controls/NavigationTabButton.qml
+P=$HOME/.local/src/kirigami-tahoe/patches/NavigationTabButton.qml
+if [ -f "$P" ] && ! cmp -s "$K" "$P"; then
+  log "System Settings tabs: KDE originals are back -> run: sudo ~/.local/bin/tahoe-kirigami-tabs"
+fi
+
+if [ $problems -eq 0 ]; then
+  plasma_ver > "$STATE/approved-plasma"; rm -f "$STATE/pending-plasma"
+  log "ALL GOOD (Plasma $(plasma_ver) approved)"
+else
+  log "Some pieces were switched off safely; the desktop keeps working with KDE defaults for them."
+fi
+exit $problems

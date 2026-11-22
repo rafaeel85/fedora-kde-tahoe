@@ -1,0 +1,1 @@
+{"KPlugin":{"Id":"local.desktop.persistentmenu","Name":"Persistent Desktop Menu","Description":"Desktop actions when the active application has no global menu","Version":"1.0","License":"MIT","Authors":[{"Name":"Local desktop customization"}],"Category":"Application Launchers","Icon":"application-menu"},"KPackageStructure":"Plasma/Applet","X-Plasma-API-Minimum-Version":"6.0"}

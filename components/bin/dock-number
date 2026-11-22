@@ -1,0 +1,17 @@
+#!/usr/bin/python3
+# Meta+N: open/focus the N-th item of the WaveTask dock (like macOS Cmd+N in some docks).
+import sys, time, dbus
+i = int(sys.argv[1]) - 1
+if not 0 <= i < 9:
+    sys.exit(1)
+s = """
+panels().forEach(function (p) {
+  p.widgets('org.vicko.wavetask').forEach(function (w) {
+    w.currentConfigGroup = ['General'];
+    w.writeConfig('shortcutRequest', '%s:%s');
+    w.reloadConfig();
+  });
+});
+""" % (i, time.time_ns())
+b = dbus.SessionBus()
+dbus.Interface(b.get_object('org.kde.plasmashell', '/PlasmaShell'), 'org.kde.PlasmaShell').evaluateScript(s)

@@ -1,0 +1,1 @@
+{"KPlugin":{"Id":"local.tahoe.search","Name":"Tahoe Spotlight Button","Description":"Magnifier button that opens Spotlight search","Version":"1.0","License":"MIT","Authors":[{"Name":"Local desktop customization"}],"Category":"Application Launchers","Icon":"search"},"KPackageStructure":"Plasma/Applet","X-Plasma-API-Minimum-Version":"6.0"}

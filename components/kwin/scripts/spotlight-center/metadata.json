@@ -1,0 +1,1 @@
+{"KPlugin":{"Id":"spotlight-center","Name":"Center Spotlight","Version":"1.0","Description":"Keep Spotlight centered as results resize it"},"X-Plasma-API":"javascript","X-Plasma-MainScript":"code/main.js","KPackageStructure":"KWin/Script"}

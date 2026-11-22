@@ -1,0 +1,12 @@
+{
+    "KPackageStructure": "KWin/WindowSwitcher",
+    "KPlugin": {
+        "Authors": [{"Name": "Local desktop customization"}],
+        "Description": "macOS Tahoe style application switcher",
+        "Id": "tahoe",
+        "License": "GPL",
+        "Name": "Tahoe"
+    },
+    "X-Plasma-API": "declarativeappletscript",
+    "X-Plasma-MainScript": "ui/main.qml"
+}

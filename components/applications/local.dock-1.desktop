@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Dock app 1
+Exec=@HOME@/.local/bin/dock-number 1
+NoDisplay=true
+
+StartupNotify=false
+X-KDE-StartupNotify=false

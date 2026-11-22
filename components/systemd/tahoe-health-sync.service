@@ -1,0 +1,8 @@
+[Unit]
+Description=Tahoe desktop: re-link Plasma shell override (safe across Plasma upgrades)
+Before=plasma-plasmashell.service plasma-kwin_wayland.service
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/tahoe-health-check --sync
+[Install]
+WantedBy=plasma-workspace.target

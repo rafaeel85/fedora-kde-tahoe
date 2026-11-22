@@ -1,0 +1,6 @@
+[Unit]
+Description=macOS Tahoe style Spotlight search
+[Service]
+ExecStart=/usr/bin/python3 @HOME@/.local/share/spotlight-tahoe/app.py
+Restart=always
+RestartSec=1

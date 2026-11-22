@@ -1,0 +1,12 @@
+{
+    "KPlugin": {
+        "Id": "tahoe-center-windows",
+        "Name": "Tahoe center new windows",
+        "Description": "Open new app windows centred (macOS-like) instead of KWin's cascade drift to the bottom-right",
+        "License": "GPL",
+        "EnabledByDefault": false
+    },
+    "X-Plasma-API": "javascript",
+    "X-Plasma-API-Minimum-Version": "6.0",
+    "KPackageStructure": "KWin/Script"
+}

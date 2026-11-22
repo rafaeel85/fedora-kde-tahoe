@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=Çöp Kutusu
+Name[en]=Trash
+Icon=user-trash
+Exec=dolphin trash:/
+Terminal=false
+NoDisplay=true
+Actions=Empty;
+
+[Desktop Action Empty]
+Name=Çöp Kutusunu Boşalt
+Exec=ktrash6 --empty

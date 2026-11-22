@@ -1,0 +1,9 @@
+[Unit]
+Description=macOS Tahoe style OSD
+After=plasma-plasmashell.service
+[Service]
+ExecStart=/usr/bin/python3 @HOME@/.local/share/tahoe-osd/app.py
+Restart=always
+RestartSec=1
+[Install]
+WantedBy=plasma-workspace.target
