@@ -75,7 +75,7 @@ KWin.TabBoxSwitcher {
                             horizontalAlignment: Text.AlignHCenter
                             elide: Text.ElideRight
                             text: {
-                                // app name ("Konsole" from "~ : claude — Konsole")
+                                // app name ("Konsole" from "~ : bash — Konsole")
                                 const c = del.caption || "";
                                 const parts = c.split(/ [—–-] /);
                                 return parts.length > 1 ? parts[parts.length - 1] : c;

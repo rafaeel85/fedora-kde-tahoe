@@ -6,6 +6,18 @@ menu bar, Control Center, Spotlight, a Dock, an Alt+Tab switcher, a lock screen 
 > Not affiliated with or endorsed by Apple. No Apple artwork, fonts or sounds are included. Sounds are
 > synthesized, glyphs are self-drawn, and UI fonts are Inter and Hack.
 
+![Desktop: menu bar and Dock](screenshots/desktop.jpg)
+
+| Control Center | Spotlight (apps) |
+|---|---|
+| ![Control Center](screenshots/control-center.jpg) | ![Spotlight](screenshots/spotlight.jpg) |
+
+| Apple menu | Battery / Energy Mode | Clock: date, calendar, weather |
+|---|---|---|
+| ![Apple menu](screenshots/menu-apple.jpg) | ![Battery menu](screenshots/menu-battery.jpg) | ![Clock menu](screenshots/menu-clock.jpg) |
+
+<sub>Screenshots: Fedora 45, Plasma 6.8, 1920×1200, Turkish UI.</sub>
+
 ## What you get
 
 | Piece | What it is |
