@@ -4,6 +4,7 @@
 #   ./install.sh                  install everything for the current user
 #   ./install.sh --no-layout      keep your current panels (skip menu bar + dock layout)
 #   ./install.sh --kirigami-tabs  also patch System Settings tabs (writes system files, needs sudo)
+#   ./install.sh --no-session     install files/settings only, don't touch the running session (tests/CI)
 #
 # A backup of your current desktop configuration is written first; ./uninstall.sh restores it.
 set -euo pipefail
@@ -20,12 +21,13 @@ MACTAHOE_ICONS=839848b9a8a38a92a6936e30c4abe35cc6f2546d
 MACTAHOE_GTK=1e45e19f510edb8cde18fa84d6cd5319f60b086b
 WAVETASK=54c6a7669a54fcb49d617da30b6a3b746619739c
 
-DO_LAYOUT=1; DO_KIRIGAMI=0
+DO_LAYOUT=1; DO_KIRIGAMI=0; SESSION=1
 for a in "$@"; do
   case "$a" in
     --no-layout) DO_LAYOUT=0 ;;
     --kirigami-tabs) DO_KIRIGAMI=1 ;;
-    -h|--help) sed -n 2,9p "$0"; exit 0 ;;
+    --no-session) SESSION=0; DO_LAYOUT=0 ;;
+    -h|--help) sed -n 2,10p "$0"; exit 0 ;;
     *) echo "unknown option: $a"; exit 2 ;;
   esac
 done
@@ -37,10 +39,10 @@ die()  { printf '\033[1;31merror:\033[0m %s\n' "$*"; exit 1; }
 # ---------------------------------------------------------------- checks
 [ "$(id -u)" -ne 0 ] || die "run as your normal user, not root (sudo is asked for when needed)"
 grep -q '^ID=fedora' /etc/os-release || warn "not Fedora — package names may differ"
-PV=$(plasmashell --version 2>/dev/null | awk '{print $2}')
+PV=$(rpm -q --qf "%{VERSION}" plasma-workspace 2>/dev/null || QT_QPA_PLATFORM=offscreen plasmashell --version 2>/dev/null | awk "{print \$2}")
 [ -n "$PV" ] || die "KDE Plasma (plasmashell) not found"
 case "$PV" in 6.8.*) ;; *) warn "tested on Plasma 6.8, you have $PV — lock screen/logout overrides are checked and switched off automatically if they fail" ;; esac
-[ "${XDG_SESSION_TYPE:-}" = wayland ] || warn "tested on Wayland only"
+[ "$SESSION" = 0 ] || [ "${XDG_SESSION_TYPE:-}" = wayland ] || warn "tested on Wayland only"
 command -v git >/dev/null || die "git is required: sudo dnf install git"
 
 # ---------------------------------------------------------------- backup
@@ -94,7 +96,11 @@ rm -rf "$LS/plasma/desktoptheme/MacTahoe-Dark-Clear"
 cp -r "$LS/plasma/desktoptheme/MacTahoe-Dark" "$LS/plasma/desktoptheme/MacTahoe-Dark-Clear"
 cp -r "$O/plasma-MacTahoe-Dark-Clear/." "$LS/plasma/desktoptheme/MacTahoe-Dark-Clear/"
 # Icons: SF-style Wi-Fi, volume, notification, tab icons
-cp -r "$O/icons-MacTahoe-dark/." "$LS/icons/MacTahoe-dark/"
+# (upstream links some size folders, e.g. preferences -> ../MacTahoe/…, so write through the link)
+(cd "$O/icons-MacTahoe-dark" && find . -type f) | while read -r f; do
+  d=$(readlink -m "$LS/icons/MacTahoe-dark/$(dirname "$f")"); mkdir -p "$d"
+  cp -f --remove-destination "$O/icons-MacTahoe-dark/$f" "$d/$(basename "$f")"
+done
 gtk-update-icon-cache -f -t "$LS/icons/MacTahoe-dark" >/dev/null 2>&1 || true
 # Kvantum: Tahoe pill tabs + Tahoe menus
 mkdir -p "$HOME/.config/Kvantum/MacTahoe"
@@ -113,7 +119,7 @@ cp -r "$O/wavetask/." "$LS/plasma/plasmoids/org.vicko.wavetask/"
 # ---------------------------------------------------------------- Tahoe components
 subst() { # replace placeholders in text files under $1
   local name; name=$(getent passwd "$USER" | cut -d: -f5 | cut -d, -f1); name=${name:-$USER}
-  grep -rlIZ -e '@HOME@' -e '@USERNAME@' "$1" 2>/dev/null | xargs -0 -r sed -i -e "s|@HOME@|$HOME|g" -e "s|@USERNAME@|$name|g"
+  (grep -rlIZ -e "@HOME@" -e "@USERNAME@" "$1" 2>/dev/null | xargs -0 -r sed -i -e "s|@HOME@|$HOME|g" -e "s|@USERNAME@|$name|g") || true
 }
 say "Installing Tahoe components"
 mkdir -p "$BIN" "$UNITS" "$LS/plasma/plasmoids" "$LS/kwin/scripts" "$LS/kwin/tabbox" "$LS/kwin/effects" \
@@ -204,9 +210,11 @@ fi
 
 # ---------------------------------------------------------------- services
 say "Enabling Tahoe services"
+if [ "$SESSION" = 1 ]; then
 systemctl --user daemon-reload
 systemctl --user enable tahoe-cc.service tahoe-menus.service tahoe-osd.service spotlight-search.service \
   tahoe-health-sync.service konsole-hide-toolbars.path >/dev/null 2>&1 || true
+fi
 "$BIN/tahoe-health-check" --sync
 kbuildsycoca6 >/dev/null 2>&1 || true
 fc-cache -f >/dev/null 2>&1 || true
@@ -223,9 +231,11 @@ if [ "$DO_LAYOUT" = 1 ]; then
     "$(cat "$REPO/config/layout.js")" >/dev/null
   plasma-apply-wallpaperimage "$LS/wallpapers/MacTahoe-Dark" >/dev/null 2>&1 || true
 fi
-gdbus call --session -d org.kde.KWin -o /KWin -m org.kde.KWin.reconfigure >/dev/null 2>&1 || true
-for s in tahoe-cc tahoe-menus tahoe-osd spotlight-search; do systemctl --user restart "$s" || true; done
-systemctl --user restart plasma-plasmashell.service || true
+if [ "$SESSION" = 1 ]; then
+  gdbus call --session -d org.kde.KWin -o /KWin -m org.kde.KWin.reconfigure >/dev/null 2>&1 || true
+  for s in tahoe-cc tahoe-menus tahoe-osd spotlight-search; do systemctl --user restart "$s" || true; done
+  systemctl --user restart plasma-plasmashell.service || true
+fi
 
 say "Done"
 cat <<EOF

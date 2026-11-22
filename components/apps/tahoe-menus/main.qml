@@ -169,7 +169,12 @@ Item {
         const s = wd["Short Forecast Day " + i]
         if (!s) return null
         const p = String(s).split("|")
-        return { day: p[0], icon: p[1], text: p[2], hi: parseFloat(p[3]), lo: parseFloat(p[4]), rain: p[5] }
+        let hi = parseFloat(p[3]), lo = parseFloat(p[4])
+        // providers drop today's high in the evening (and sometimes a low): fall back like Apple Weather
+        const cur = parseFloat(wd["Temperature"])
+        if (isNaN(hi)) hi = i === 0 && !isNaN(cur) ? Math.max(cur, isNaN(lo) ? cur : lo) : lo
+        if (isNaN(lo)) lo = i === 0 && !isNaN(cur) ? Math.min(cur, isNaN(hi) ? cur : hi) : hi
+        return { day: p[0], icon: p[1], text: p[2], hi: hi, lo: lo, rain: p[5] }
     }
     readonly property var today: forecast(0)
     readonly property string wxIcon: (wd["Condition Icon"] && wd["Condition Icon"] !== "weather-none-available") ? wd["Condition Icon"] : (today ? today.icon : "")
