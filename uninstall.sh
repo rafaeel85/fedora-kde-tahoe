@@ -40,6 +40,6 @@ gdbus call --session -d org.kde.KWin -o /KWin -m org.kde.KWin.reconfigure >/dev/
 cat <<EOF
 Done. The MacTahoe themes (vinceliuice) and the WaveTask dock stay installed; remove them with
 their own uninstallers if you no longer want them. If you ran --kirigami-tabs, restore KDE's
-originals with:  sudo dnf reinstall kf6-kirigami
+originals with:  sudo dnf reinstall kf6-kirigami   (Arch: sudo pacman -S kirigami)
 Log out and back in to finish.
 EOF

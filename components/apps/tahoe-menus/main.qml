@@ -332,7 +332,7 @@ Item {
 
     // ===================================================================== Finder (desktop) menus
     // menu name "f-<Title>" (sent by the local.tahoe.appname plasmoid when the desktop is focused)
-    readonly property string qd: "/usr/lib64/qt6/bin/qdbus "
+    readonly property string qd: "@QTBINS@/qdbus "
     readonly property var finderMenus: ({
         "Finder": [{label: "Finder Hakkında", command: "kinfocenter"}, {sep: true},
                    {label: "Çöp Kutusunu Aç…", command: "dolphin trash:/"}],

@@ -12,7 +12,7 @@ PlasmoidItem {
     preferredRepresentation: fullRepresentation
     Plasmoid.backgroundHints: PlasmaCore.Types.NoBackground
 
-    readonly property string qdbus: "/usr/lib64/qt6/bin/qdbus "
+    readonly property string qdbus: "@QTBINS@/qdbus "
     property string appName: ""
     readonly property bool onDesktop: appName === ""
 

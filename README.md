@@ -1,6 +1,6 @@
 # fedora-kde-tahoe
 
-A macOS Tahoe–style desktop for **Fedora KDE Plasma 6 (Wayland)**. It is more than a theme. It adds a working
+A macOS Tahoe–style desktop for **KDE Plasma 6 (Wayland)** on **Fedora** and **Arch Linux** (plus Arch-based distros: EndeavourOS, CachyOS, Manjaro). It is more than a theme. It adds a working
 menu bar, Control Center, Spotlight, a Dock, an Alt+Tab switcher, a lock screen and a shutdown dialog, notifications, an on-screen display, and sounds.
 
 > Not affiliated with or endorsed by Apple. No Apple artwork, fonts or sounds are included. Sounds are
@@ -44,15 +44,22 @@ cd fedora-kde-tahoe
 Then log out and back in.
 
 - `./install.sh --no-layout`: keep your own panels. Only the themes, apps and settings are installed.
-- `./install.sh --kirigami-tabs`: also give System Settings macOS segmented tabs. This changes two system QML files (sudo), and you rerun it after `kf6-kirigami` updates.
+- `./install.sh --kirigami-tabs`: also give System Settings macOS segmented tabs. This changes two system QML files (sudo), and you rerun it after Kirigami updates (`kf6-kirigami` on Fedora, `kirigami` on Arch).
 - `./uninstall.sh`: removes the Tahoe components and restores the backup that `install.sh` made of your settings.
 
-**Requirements:** Fedora 44/45, Plasma 6.8 on Wayland. `install.sh` installs the needed packages with `dnf`, including the build tools for the WaveTask dock plugin.
+**Requirements:** Plasma 6.8 on Wayland, on one of:
+- **Fedora** 44/45 (KDE edition or KDE spin): packages are installed with `dnf`.
+- **Arch Linux** or an Arch-based distro: packages are installed with `pacman`.
+
+`install.sh` detects the distro, installs the needed packages (including the build tools for the WaveTask dock plugin) and finds the Qt 6 paths on its own. On another distro you can install the dependencies yourself and run `./install.sh --skip-packages`.
 
 **Optional, for real blur behind translucent windows:**
 ```bash
+# Fedora
 sudo dnf copr enable infinality/kwin-effects-better-blur-dx
 sudo dnf install kwin-effects-better-blur-dx
+# Arch (AUR)
+yay -S kwin-effects-better-blur-dx
 ```
 
 ### Notes
@@ -80,7 +87,7 @@ Upstream projects are downloaded at pinned commits during install. Nothing from 
 
 ## Azərbaycanca
 
-Fedora KDE Plasma 6 üçün macOS Tahoe görünüşü və davranışı.
+KDE Plasma 6 üçün macOS Tahoe görünüşü və davranışı. **Fedora** və **Arch Linux** (EndeavourOS, CachyOS, Manjaro daxil) dəstəklənir. Quraşdırıcı distronu özü tanıyır.
 
 **Quraşdırma:**
 ```bash

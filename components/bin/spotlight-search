@@ -1,10 +1,10 @@
 #!/bin/sh
-if /usr/lib64/qt6/bin/qdbus local.Spotlight /Search local.Spotlight.toggle 2>/dev/null; then
+if @QTBINS@/qdbus local.Spotlight /Search local.Spotlight.toggle 2>/dev/null; then
  exit 0
 fi
 systemctl --user start spotlight-search.service
 for attempt in 1 2 3 4 5 6 7 8 9 10; do
- if /usr/lib64/qt6/bin/qdbus local.Spotlight /Search local.Spotlight.display 2>/dev/null; then exit 0; fi
+ if @QTBINS@/qdbus local.Spotlight /Search local.Spotlight.display 2>/dev/null; then exit 0; fi
  sleep 0.2
 done
 exit 1

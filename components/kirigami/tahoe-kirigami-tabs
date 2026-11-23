@@ -4,7 +4,7 @@
 # rerun it after kf6-kirigami updates (tahoe-health-check --full reminds you).
 set -e
 SRC=@HOME@/.local/src/kirigami-tahoe/patches
-DST=/usr/lib64/qt6/qml/org/kde/kirigami/controls
+DST=@QTQML@/org/kde/kirigami/controls
 BAK=@HOME@/.local/state/fedora-kde-tahoe/kirigami-controls-original
 for f in NavigationTabButton.qml NavigationTabBar.qml; do
     if ! grep -q "Local macOS Tahoe patch" "$DST/$f"; then

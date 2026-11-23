@@ -14,7 +14,9 @@ KEEP=$HOME/.local/share/tahoe-overrides          # our lockscreen/ and logout/ l
 STATE=$HOME/.local/state/tahoe-health
 mkdir -p "$STATE" "$KEEP"
 log() { echo "[tahoe] $*"; }
-plasma_ver() { rpm -q --qf '%{VERSION}' plasma-workspace 2>/dev/null | cut -d. -f1,2; }
+plasma_ver() { QT_QPA_PLATFORM=offscreen plasmashell --version 2>/dev/null | awk '{print $2}' | cut -d. -f1,2; }
+# KDE helper binaries live in /usr/libexec (Fedora, openSUSE), /usr/lib (Arch) or /usr/lib/<triplet>/libexec (Debian)
+libexec() { for d in /usr/libexec /usr/lib /usr/lib/*/libexec /usr/lib/*/libexec/kf6; do [ -x "$d/$1" ] && { echo "$d/$1"; return; }; done; echo "$1"; }
 
 # keep the real copies outside the override dir so they can be switched on/off
 for d in lockscreen logout; do
@@ -65,7 +67,7 @@ since=$(date '+%Y-%m-%d %H:%M:%S')
 
 # 1) lock screen
 enable_override lockscreen
-timeout 6 /usr/libexec/kscreenlocker_greet --testing >"$STATE/lock.log" 2>&1 &
+timeout 6 "$(libexec kscreenlocker_greet)" --testing >"$STATE/lock.log" 2>&1 &
 sleep 4; pkill -x kscreenlocker_g 2>/dev/null; wait 2>/dev/null
 if journalctl --user --since "$since" -o cat 2>/dev/null | cat - "$STATE/lock.log" \
    | grep -qiE 'Path traversal|falling back to built-in|lockscreen QML outdated|lockscreen/.*(error|unavailable|is not a type|Cannot assign)'; then
@@ -78,7 +80,7 @@ fi
 # 2) logout / shutdown dialog
 enable_override logout
 since=$(date '+%Y-%m-%d %H:%M:%S')
-timeout 5 /usr/libexec/ksmserver-logout-greeter --windowed >"$STATE/logout.log" 2>&1 &
+timeout 5 "$(libexec ksmserver-logout-greeter)" --windowed >"$STATE/logout.log" 2>&1 &
 sleep 3; pkill -x ksmserver-logou 2>/dev/null; wait 2>/dev/null
 if journalctl --user --since "$since" -o cat 2>/dev/null | cat - "$STATE/logout.log" \
    | grep -qiE 'Path traversal|Failed to load|logout/.*(error|unavailable|is not a type|Expected token|Cannot assign|ReferenceError)'; then
@@ -137,7 +139,7 @@ gdbus call --session -d org.kde.KWin -o /Scripting -m org.kde.kwin.Scripting.isS
   && log "kwin script: OK" || { problems=1; log "KWIN SCRIPT spotlight-center not loaded"; }
 
 # 6) Kirigami segmented tabs (system files are replaced by every kf6-kirigami update)
-K=/usr/lib64/qt6/qml/org/kde/kirigami/controls/NavigationTabButton.qml
+K=@QTQML@/org/kde/kirigami/controls/NavigationTabButton.qml
 P=$HOME/.local/src/kirigami-tahoe/patches/NavigationTabButton.qml
 if [ -f "$P" ] && ! cmp -s "$K" "$P"; then
   log "System Settings tabs: KDE originals are back -> run: sudo ~/.local/bin/tahoe-kirigami-tabs"

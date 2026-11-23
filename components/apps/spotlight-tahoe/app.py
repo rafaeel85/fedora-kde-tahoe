@@ -156,7 +156,7 @@ def recent_files(limit=40):
 
 
 # ---------------------------------------------------------------- actions
-QDBUS = '/usr/lib64/qt6/bin/qdbus'
+QDBUS = '@QTBINS@/qdbus'
 ACTIONS = [
     ('lock', 'Ekranı Kilitle', 'system-lock-screen', ['loginctl', 'lock-session']),
     ('sleep', 'Uyku', 'system-suspend', ['systemctl', 'suspend']),
@@ -337,7 +337,7 @@ view = QQuickView()
 view.setColor(QColor('transparent'))
 view.setFlags(Qt.Tool | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
 view.setTitle('Spotlight Search')
-view.engine().addImportPath('/usr/lib64/qt6/qml')
+view.engine().addImportPath('@QTQML@')
 view.rootContext().setContextProperty('bridge', bridge)
 view.rootContext().setContextProperty('iconDir', QUrl.fromLocalFile(str(HERE / 'icons') + '/').toString())
 view.setSource(QUrl.fromLocalFile(str(HERE / 'main.qml')))

@@ -10,7 +10,7 @@ PlasmoidItem {
  preferredRepresentation: fullRepresentation
  toolTipMainText: "Masaüstü menyusu"
  property var items: []
- readonly property string qdbus: "/usr/lib64/qt6/bin/qdbus "
+ readonly property string qdbus: "@QTBINS@/qdbus "
  readonly property var menus: ({
  "File": [{label:"Home",command:"dolphin @HOME@"},{label:"Documents",command:"dolphin @HOME@/Documents"},{label:"Terminal",command:"konsole"}],
  "Edit": [{label:"Clipboard history",command:qdbus+"org.kde.klipper /klipper org.kde.klipper.klipper.showKlipperPopupMenu"},{label:"Edit desktop and panels",command:qdbus+"org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.editMode true"}],

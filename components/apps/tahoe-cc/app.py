@@ -103,7 +103,7 @@ view = QQuickView()
 view.setColor(QColor('transparent'))
 view.setFlags(Qt.Tool | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
 view.setTitle('Denetim Merkezi')
-view.engine().addImportPath('/usr/lib64/qt6/qml')
+view.engine().addImportPath('@QTQML@')
 view.rootContext().setContextProperty('bridge', bridge)
 view.setSource(QUrl.fromLocalFile(str(HERE / 'main.qml')))
 if view.status() == QQuickView.Error:

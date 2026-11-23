@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
-# fedora-kde-tahoe — macOS Tahoe look & feel for Fedora KDE Plasma 6 (Wayland).
+# fedora-kde-tahoe — macOS Tahoe look & feel for KDE Plasma 6 (Wayland).
+# Supported: Fedora KDE; Arch Linux and Arch-based distros (EndeavourOS, CachyOS, Manjaro).
 #
 #   ./install.sh                  install everything for the current user
 #   ./install.sh --no-layout      keep your current panels (skip menu bar + dock layout)
 #   ./install.sh --kirigami-tabs  also patch System Settings tabs (writes system files, needs sudo)
 #   ./install.sh --no-session     install files/settings only, don't touch the running session (tests/CI)
+#   ./install.sh --skip-packages  don't install distro packages (you installed the dependencies yourself)
 #
 # A backup of your current desktop configuration is written first; ./uninstall.sh restores it.
 set -euo pipefail
@@ -21,12 +23,13 @@ MACTAHOE_ICONS=839848b9a8a38a92a6936e30c4abe35cc6f2546d
 MACTAHOE_GTK=1e45e19f510edb8cde18fa84d6cd5319f60b086b
 WAVETASK=54c6a7669a54fcb49d617da30b6a3b746619739c
 
-DO_LAYOUT=1; DO_KIRIGAMI=0; SESSION=1
+DO_LAYOUT=1; DO_KIRIGAMI=0; SESSION=1; DO_PKGS=1
 for a in "$@"; do
   case "$a" in
     --no-layout) DO_LAYOUT=0 ;;
     --kirigami-tabs) DO_KIRIGAMI=1 ;;
     --no-session) SESSION=0; DO_LAYOUT=0 ;;
+    --skip-packages) DO_PKGS=0 ;;
     -h|--help) sed -n 2,10p "$0"; exit 0 ;;
     *) echo "unknown option: $a"; exit 2 ;;
   esac
@@ -38,12 +41,23 @@ die()  { printf '\033[1;31merror:\033[0m %s\n' "$*"; exit 1; }
 
 # ---------------------------------------------------------------- checks
 [ "$(id -u)" -ne 0 ] || die "run as your normal user, not root (sudo is asked for when needed)"
-grep -q '^ID=fedora' /etc/os-release || warn "not Fedora — package names may differ"
-PV=$(rpm -q --qf "%{VERSION}" plasma-workspace 2>/dev/null || QT_QPA_PLATFORM=offscreen plasmashell --version 2>/dev/null | awk "{print \$2}")
+# distro family -> package manager
+. /etc/os-release
+case " ${ID:-} ${ID_LIKE:-} " in
+  *" fedora "*) DISTRO=fedora ;;
+  *" arch "*)   DISTRO=arch ;;
+  *) DISTRO=other ;;
+esac
+if [ "$DISTRO" = other ] && [ "$DO_PKGS" = 1 ]; then
+  die "${PRETTY_NAME:-this distro} is not supported yet (Fedora, Arch and Arch-based only).
+       Install the dependencies yourself (see README) and run: ./install.sh --skip-packages"
+fi
+echo "distro: ${PRETTY_NAME:-$ID} ($DISTRO)"
+PV=$(QT_QPA_PLATFORM=offscreen plasmashell --version 2>/dev/null | awk '{print $2}' || true)
 [ -n "$PV" ] || die "KDE Plasma (plasmashell) not found"
 case "$PV" in 6.8.*) ;; *) warn "tested on Plasma 6.8, you have $PV — lock screen/logout overrides are checked and switched off automatically if they fail" ;; esac
 [ "$SESSION" = 0 ] || [ "${XDG_SESSION_TYPE:-}" = wayland ] || warn "tested on Wayland only"
-command -v git >/dev/null || die "git is required: sudo dnf install git"
+command -v git >/dev/null || die "git is required (Fedora: sudo dnf install git, Arch: sudo pacman -S git)"
 
 # ---------------------------------------------------------------- backup
 say "Backing up your current desktop configuration"
@@ -58,16 +72,46 @@ echo "$BK" > "$STATE/last-backup"
 echo "saved: $BK"
 
 # ---------------------------------------------------------------- packages
-say "Installing packages (sudo)"
-PKGS="git rsync kvantum python3-pyside6 python3-dbus python3-gobject python3-pillow rsms-inter-fonts
+FEDORA_PKGS="git rsync kvantum python3-pyside6 python3-dbus python3-gobject python3-pillow rsms-inter-fonts
       source-foundry-hack-fonts kdeplasma-addons plasma-milou plasma-nm kf6-bluez-qt qt6-qt5compat
       cmake extra-cmake-modules gcc-c++ qt6-qtbase-devel qt6-qtbase-private-devel qt6-qtdeclarative-devel
       kf6-ki18n-devel kf6-kservice-devel kf6-kwindowsystem-devel kf6-kconfig-devel kf6-kconfigwidgets-devel
       kf6-knotifications-devel kf6-kio-devel kf6-kcoreaddons-devel kf6-kitemmodels-devel kf6-kglobalaccel-devel
       kf6-kxmlgui-devel libplasma-devel plasma-activities-devel plasma-activities-stats-devel
       plasma-workspace-devel libksysguard-devel kwin-devel libepoxy-devel libdrm-devel"
-missing=$(for p in $PKGS; do rpm -q "$p" >/dev/null 2>&1 || echo "$p"; done)
-if [ -n "$missing" ]; then sudo dnf install -y $missing; else echo "all present"; fi
+# Arch: KDE libraries ship their headers/CMake files in the main package (no -devel split)
+ARCH_PKGS="git rsync xz kvantum pyside6 python-dbus python-gobject python-pillow inter-font ttf-hack
+      kdeplasma-addons milou plasma-nm plasma-pa powerdevil plasma5support bluez-qt qt6-5compat qt6-tools
+      gtk-update-icon-cache
+      cmake extra-cmake-modules base-devel qt6-base qt6-declarative ki18n kservice kwindowsystem kconfig
+      kconfigwidgets knotifications kio kcoreaddons kitemmodels kglobalaccel kxmlgui libplasma
+      plasma-activities plasma-activities-stats plasma-workspace libksysguard kwin libepoxy libdrm vulkan-headers"
+if [ "$DO_PKGS" = 1 ]; then
+  say "Installing packages (sudo)"
+  case "$DISTRO" in
+    fedora)
+      missing=$(for p in $FEDORA_PKGS; do rpm -q "$p" >/dev/null 2>&1 || echo "$p"; done)
+      if [ -n "$missing" ]; then sudo dnf install -y $missing; else echo "all present"; fi ;;
+    arch)
+      missing=$(pacman -T $ARCH_PKGS || true)
+      if [ -n "$missing" ]; then sudo pacman -S --needed --noconfirm $missing; else echo "all present"; fi ;;
+  esac
+fi
+
+# Qt 6 locations differ per distro (/usr/lib64/qt6, /usr/lib/qt6, /usr/lib/<triplet>/qt6)
+qtq() { local q
+  for q in qtpaths6 qtpaths-qt6 /usr/lib/qt6/bin/qtpaths /usr/lib64/qt6/bin/qtpaths qtpaths; do
+    command -v "$q" >/dev/null 2>&1 || continue
+    case "$("$q" --query QT_VERSION 2>/dev/null)" in 6.*) "$q" --query "$1"; return ;; esac
+  done; }
+QTQML=$(qtq QT_INSTALL_QML || true); QTBINS=$(qtq QT_INSTALL_BINS || true)
+for d in /usr/lib64/qt6 /usr/lib/qt6 /usr/lib/*/qt6; do
+  [ -d "${QTQML:-/nonexistent}/org/kde/kirigami" ] || { [ -d "$d/qml/org/kde/kirigami" ] && QTQML=$d/qml; }
+  [ -x "${QTBINS:-/nonexistent}/qdbus" ] || { [ -x "$d/bin/qdbus" ] && QTBINS=$d/bin; }
+done
+[ -d "${QTQML:-/nonexistent}/org/kde/kirigami" ] || die "Qt 6 QML directory with Kirigami not found"
+[ -x "${QTBINS:-/nonexistent}/qdbus" ] || die "qdbus (Qt 6) not found — install your distro's Qt 6 tools package"
+echo "Qt 6: qml=$QTQML bins=$QTBINS"
 
 # ---------------------------------------------------------------- upstream sources
 fetch() { # repo commit dir
@@ -118,8 +162,9 @@ cp -r "$O/wavetask/." "$LS/plasma/plasmoids/org.vicko.wavetask/"
 
 # ---------------------------------------------------------------- Tahoe components
 subst() { # replace placeholders in text files under $1
-  local name; name=$(getent passwd "$USER" | cut -d: -f5 | cut -d, -f1); name=${name:-$USER}
-  (grep -rlIZ -e "@HOME@" -e "@USERNAME@" "$1" 2>/dev/null | xargs -0 -r sed -i -e "s|@HOME@|$HOME|g" -e "s|@USERNAME@|$name|g") || true
+  local name; name=$(getent passwd "$(id -un)" | cut -d: -f5 | cut -d, -f1); name=${name:-$(id -un)}
+  (grep -rlIZ -e "@HOME@" -e "@USERNAME@" -e "@QTQML@" -e "@QTBINS@" "$1" 2>/dev/null | xargs -0 -r sed -i \
+     -e "s|@HOME@|$HOME|g" -e "s|@USERNAME@|$name|g" -e "s|@QTQML@|$QTQML|g" -e "s|@QTBINS@|$QTBINS|g") || true
 }
 say "Installing Tahoe components"
 mkdir -p "$BIN" "$UNITS" "$LS/plasma/plasmoids" "$LS/kwin/scripts" "$LS/kwin/tabbox" "$LS/kwin/effects" \
@@ -240,11 +285,15 @@ if [ "$SESSION" = 1 ]; then
 fi
 
 say "Done"
+case "$DISTRO" in
+  arch) BLUR="AUR package kwin-effects-better-blur-dx (e.g. yay -S kwin-effects-better-blur-dx)" ;;
+  *)    BLUR="sudo dnf copr enable infinality/kwin-effects-better-blur-dx && sudo dnf install kwin-effects-better-blur-dx" ;;
+esac
 cat <<EOF
 Log out and back in once so every app picks up the new style.
   * Spotlight: Meta+X        * Alt+Tab: Tahoe switcher      * Overview: Meta+W
   * Check / auto-repair after a Plasma update:   tahoe-health-check --full
   * Undo everything:                              $REPO/uninstall.sh
 Optional (real blur behind translucent windows):
-  sudo dnf copr enable infinality/kwin-effects-better-blur-dx && sudo dnf install kwin-effects-better-blur-dx
+  $BLUR
 EOF

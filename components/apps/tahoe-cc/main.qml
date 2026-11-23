@@ -115,7 +115,7 @@ Item {
     function toggleNight() {
         nightOn = !nightOn
         bridge.run("kwriteconfig6 --file kwinrc --group NightColor --key Active " + (nightOn ? "true" : "false")
-                   + " && /usr/lib64/qt6/bin/qdbus org.kde.KWin /KWin reconfigure")
+                   + " && @QTBINS@/qdbus org.kde.KWin /KWin reconfigure")
     }
 
     Bright.ScreenBrightnessControl { id: brightnessCtl; isSilent: true }   // no HUD while dragging the CC slider (like macOS)
@@ -466,7 +466,7 @@ Item {
             CircleButton {
                 x: 2 * (root.u + root.g); y: 2 * (root.u + root.g)
                 glyph: "stage"
-                onClicked: root.launch("/usr/lib64/qt6/bin/qdbus org.kde.kglobalaccel /component/kwin invokeShortcut Overview")
+                onClicked: root.launch("@QTBINS@/qdbus org.kde.kglobalaccel /component/kwin invokeShortcut Overview")
             }
             CircleButton {
                 x: 3 * (root.u + root.g); y: 2 * (root.u + root.g)
