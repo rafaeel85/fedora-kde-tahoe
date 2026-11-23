@@ -190,6 +190,8 @@ kw kwinrulesrc tahoe-osd-nofocus skiptaskbar true
 kw kwinrulesrc tahoe-osd-nofocus skiptaskbarrule 2
 kw kwinrulesrc tahoe-osd-nofocus skipswitcher true
 kw kwinrulesrc tahoe-osd-nofocus skipswitcherrule 2
+kw kwinrulesrc tahoe-osd-nofocus above true
+kw kwinrulesrc tahoe-osd-nofocus aboverule 2
 order=$(kreadconfig6 --file kwinrulesrc --group General --key Order)
 case ",$order," in *,tahoe-osd-nofocus,*) ;; *) kw kwinrulesrc General Order "${order:+$order,}tahoe-osd-nofocus" ;; esac
 # Konsole = Terminal

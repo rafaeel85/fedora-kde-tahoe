@@ -30,9 +30,15 @@ function attach(w) {
     if (cls !== "local.spotlight" && cls !== "local.tahoecc" && cls !== "local.tahoemenus" && cls !== "local.tahoeosd") return;
     // keep these helper windows out of the dock, Alt+Tab and pager
     w.skipTaskbar = true; w.skipSwitcher = true; w.skipPager = true;
+    // Wayland ignores Qt WindowStaysOnTopHint: without this the OSD (never focused)
+    // opened BEHIND app windows and was only visible on the empty desktop
+    w.keepAbove = true;
+    // the client may reset the state right after mapping -> re-assert it
+    w.keepAboveChanged.connect(function () { if (!w.keepAbove) w.keepAbove = true; });
     let moving = false;
     function place() {
         if (moving) return;
+        if (!w.keepAbove) w.keepAbove = true;
         const area = w.output.geometry;
         const g = w.frameGeometry;
         let x, y;
