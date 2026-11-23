@@ -3,6 +3,7 @@ Type=Application
 Name=Dock app 7
 Exec=@HOME@/.local/bin/dock-number 7
 NoDisplay=true
+X-KDE-Shortcuts=Meta+7
 
 StartupNotify=false
 X-KDE-StartupNotify=false

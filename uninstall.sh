@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Remove fedora-kde-tahoe and restore the configuration saved by install.sh.
-#   ./uninstall.sh            restore the newest backup
+# Remove kde-tahoe and restore the configuration saved by install.sh.
+#   ./uninstall.sh            restore your desktop as it was before the first install.sh run
 #   ./uninstall.sh FILE       restore a specific backup tarball
 set -uo pipefail
-STATE="$HOME/.local/state/fedora-kde-tahoe"
+STATE="$HOME/.local/state/fedora-kde-tahoe"   # old name kept so existing installs still find their backups
 LS="$HOME/.local/share"; BIN="$HOME/.local/bin"; UNITS="$HOME/.config/systemd/user"
-BK="${1:-$(cat "$STATE/last-backup" 2>/dev/null)}"
+BK="${1:-$(cat "$STATE/original-backup" 2>/dev/null || cat "$STATE/last-backup" 2>/dev/null)}"
 
 echo "==> Stopping Tahoe services"
 for u in tahoe-cc.service tahoe-menus.service tahoe-osd.service spotlight-search.service \
@@ -32,6 +32,7 @@ if [ -n "$BK" ] && [ -f "$BK" ]; then
   systemctl --user stop plasma-plasmashell.service
   (cd "$HOME" && tar -xzf "$BK")
   systemctl --user start plasma-plasmashell.service
+  rm -f "$STATE/original-backup"   # a later install starts from the restored desktop
 else
   echo "no backup found — panels and settings were left as they are"
 fi

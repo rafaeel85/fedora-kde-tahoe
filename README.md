@@ -1,4 +1,4 @@
-# fedora-kde-tahoe
+# kde-tahoe
 
 A macOS Tahoe–style desktop for **KDE Plasma 6 (Wayland)** on **Fedora** and **Arch Linux** (plus Arch-based distros: EndeavourOS, CachyOS, Manjaro). It is more than a theme. It adds a working
 menu bar, Control Center, Spotlight, a Dock, an Alt+Tab switcher, a lock screen and a shutdown dialog, notifications, an on-screen display, and sounds.
@@ -35,9 +35,11 @@ menu bar, Control Center, Spotlight, a Dock, an Alt+Tab switcher, a lock screen 
 
 ## Install
 
+Step-by-step guides for each distro, updating and troubleshooting are in the **[Wiki](https://github.com/rafaeel85/kde-tahoe/wiki)**.
+
 ```bash
-git clone https://github.com/rafaeel85/fedora-kde-tahoe.git
-cd fedora-kde-tahoe
+git clone https://github.com/rafaeel85/kde-tahoe.git
+cd kde-tahoe
 ./install.sh
 ```
 
@@ -91,11 +93,11 @@ KDE Plasma 6 üçün macOS Tahoe görünüşü və davranışı. **Fedora** və 
 
 **Quraşdırma:**
 ```bash
-git clone https://github.com/rafaeel85/fedora-kde-tahoe.git
-cd fedora-kde-tahoe
+git clone https://github.com/rafaeel85/kde-tahoe.git
+cd kde-tahoe
 ./install.sh
 ```
-Sonra sistemdən çıxıb yenidən daxil olun.
+Sonra sistemdən çıxıb yenidən daxil olun. Ətraflı təlimat: **[Wiki](https://github.com/rafaeel85/kde-tahoe/wiki/Azerbaycanca)**.
 
 - `./install.sh --no-layout`: öz panellərinizi saxlayır.
 - `./uninstall.sh`: hər şeyi silir və köhnə ayarlarınızı geri qaytarır.

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# fedora-kde-tahoe — macOS Tahoe look & feel for KDE Plasma 6 (Wayland).
+# kde-tahoe (formerly fedora-kde-tahoe) — macOS Tahoe look & feel for KDE Plasma 6 (Wayland).
 # Supported: Fedora KDE; Arch Linux and Arch-based distros (EndeavourOS, CachyOS, Manjaro).
 #
 #   ./install.sh                  install everything for the current user
@@ -15,7 +15,7 @@ REPO="$(cd "$(dirname "$0")" && pwd)"
 C="$REPO/components"; O="$REPO/overlays"
 LS="$HOME/.local/share"; BIN="$HOME/.local/bin"; UNITS="$HOME/.config/systemd/user"
 WORK="${XDG_CACHE_HOME:-$HOME/.cache}/fedora-kde-tahoe"
-STATE="$HOME/.local/state/fedora-kde-tahoe"
+STATE="$HOME/.local/state/fedora-kde-tahoe"   # old name kept so existing installs still find their backups
 
 # Upstream projects, pinned to tested commits
 MACTAHOE_KDE=cbf6a1f71b591d143184855d62f6272ce533e7c3
@@ -69,7 +69,10 @@ BK="$STATE/backup-$(date +%Y%m%d-%H%M%S).tar.gz"
   .config/Kvantum .config/gtk-3.0 .config/gtk-4.0 .config/konsolerc .config/dolphinrc \
   .local/share/user-places.xbel 2>/dev/null) || true
 echo "$BK" > "$STATE/last-backup"
-echo "saved: $BK"
+# the FIRST backup is your pre-Tahoe desktop: keep pointing at it when install.sh is rerun to update
+orig=$(cat "$STATE/original-backup" 2>/dev/null || true)
+[ -n "$orig" ] && [ -f "$orig" ] || echo "$BK" > "$STATE/original-backup"
+echo "saved: $BK (original desktop: $(cat "$STATE/original-backup"))"
 
 # ---------------------------------------------------------------- packages
 FEDORA_PKGS="git rsync kvantum python3-pyside6 python3-dbus python3-gobject python3-pillow rsms-inter-fonts
@@ -239,6 +242,15 @@ kw kwinrulesrc tahoe-osd-nofocus above true
 kw kwinrulesrc tahoe-osd-nofocus aboverule 2
 order=$(kreadconfig6 --file kwinrulesrc --group General --key Order)
 case ",$order," in *,tahoe-osd-nofocus,*) ;; *) kw kwinrulesrc General Order "${order:+$order,}tahoe-osd-nofocus" ;; esac
+# Meta+1..9 open Dock items (local.dock-N.desktop) -> take the keys away from Plasma's task-manager entries
+for n in 1 2 3 4 5 6 7 8 9; do
+  if [ "$SESSION" = 1 ]; then
+    gdbus call --session -d org.kde.kglobalaccel -o /kglobalaccel -m org.kde.KGlobalAccel.setForeignShortcutKeys \
+      "['plasmashell','activate task manager entry $n','','']" "@ai []" >/dev/null 2>&1 || true
+  else
+    kw kglobalshortcutsrc plasmashell "activate task manager entry $n" "none,Meta+$n,Activate Task Manager Entry $n"
+  fi
+done
 # Konsole = Terminal
 kw konsolerc "Desktop Entry" DefaultProfile SequoiaGlass.profile
 # GTK apps
