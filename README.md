@@ -29,7 +29,7 @@ menu bar, Control Center, Spotlight, a Dock, an Alt+Tab switcher, a lock screen 
 | **Alt+Tab** | Large icons in a glass bar, as in Cmd+Tab |
 | **Lock screen / shutdown dialog** | Big clock and glass password field. The shutdown dialog is a macOS-style alert with a 60 s countdown |
 | **Notifications / OSD** | Banners at the top right, file-copy progress, and a volume/brightness HUD |
-| **Windows** | Genie minimize, centred new windows, and a MacTahoe decoration with ▢ ✕ buttons on the right |
+| **Windows** | Genie minimize, centred new windows, and a MacTahoe decoration with ▢ ✕ buttons on the right. App menus (Kvantum) use the same blurred glass as the menu-bar menus |
 | **Terminal / Files** | Konsole styled like Terminal.app, and Finder-style blue sidebar icons in Dolphin |
 | **Safety net** | `tahoe-health-check` runs at login. After a Plasma update it turns broken pieces off and goes back to KDE's defaults (you never get a broken lock screen) |
 
