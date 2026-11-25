@@ -1,0 +1,9 @@
+[Unit]
+Description=macOS Tahoe adaptive menu-bar tint (wallpaper brightness)
+After=plasma-plasmashell.service
+[Service]
+ExecStart=/usr/bin/python3 @HOME@/.local/share/tahoe-bartint/app.py
+Restart=always
+RestartSec=1
+[Install]
+WantedBy=plasma-workspace.target

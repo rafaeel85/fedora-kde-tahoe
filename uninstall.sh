@@ -8,7 +8,7 @@ LS="$HOME/.local/share"; BIN="$HOME/.local/bin"; UNITS="$HOME/.config/systemd/us
 BK="${1:-$(cat "$STATE/original-backup" 2>/dev/null || cat "$STATE/last-backup" 2>/dev/null)}"
 
 echo "==> Stopping Tahoe services"
-for u in tahoe-cc.service tahoe-menus.service tahoe-osd.service spotlight-search.service \
+for u in tahoe-cc.service tahoe-menus.service tahoe-osd.service tahoe-bartint.service spotlight-search.service \
          tahoe-health-sync.service konsole-hide-toolbars.path konsole-hide-toolbars.service; do
   systemctl --user disable --now "$u" >/dev/null 2>&1
   rm -f "$UNITS/$u"
@@ -17,7 +17,7 @@ rm -rf "$UNITS/plasma-krunner.service.d"
 systemctl --user daemon-reload
 
 echo "==> Removing Tahoe components"
-rm -rf "$LS"/{spotlight-tahoe,tahoe-cc,tahoe-menus,tahoe-osd,tahoe-overrides} \
+rm -rf "$LS"/{spotlight-tahoe,tahoe-cc,tahoe-menus,tahoe-osd,tahoe-bartint,tahoe-overrides} \
        "$LS"/plasma/plasmoids/{local.tahoe.appname,local.tahoe.controlcenter,local.tahoe.menuitem,local.tahoe.notifications,local.tahoe.search,local.desktop.persistentmenu} \
        "$LS"/kwin/scripts/{spotlight-center,tahoe-center-windows} "$LS/kwin/tabbox/tahoe" "$LS/kwin/effects/launchpad-smooth" \
        "$LS/plasma/shells/org.kde.plasma.desktop" "$LS/sounds/Tahoe-Glass" \

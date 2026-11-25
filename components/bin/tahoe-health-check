@@ -129,7 +129,7 @@ sys.exit(0 if c.status() == QQmlComponent.Ready else (print(c.errorString()) or 
 fi
 
 # 4) helper apps
-for s in tahoe-cc tahoe-menus tahoe-osd spotlight-search; do
+for s in tahoe-cc tahoe-menus tahoe-osd tahoe-bartint spotlight-search; do
   if systemctl --user is-active --quiet "$s"; then log "$s: OK"
   else problems=1; log "${s^^}: not running -> journalctl --user -u $s"; fi
 done

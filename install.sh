@@ -264,14 +264,14 @@ for v in 3.0 4.0; do
 done
 if command -v flatpak >/dev/null; then
   flatpak override --user --env=GTK_THEME=MacTahoe-Dark --filesystem=xdg-config/gtk-3.0:ro \
-    --filesystem=xdg-config/gtk-4.0:ro --filesystem=xdg-data/icons:ro --filesystem=~/.themes:ro || true
+    --filesystem=xdg-config/gtk-4.0:ro --filesystem=xdg-data/icons:ro --filesystem=~/.themes:ro --filesystem=xdg-config/fontconfig:ro || true
 fi
 
 # ---------------------------------------------------------------- services
 say "Enabling Tahoe services"
 if [ "$SESSION" = 1 ]; then
 systemctl --user daemon-reload
-systemctl --user enable tahoe-cc.service tahoe-menus.service tahoe-osd.service spotlight-search.service \
+systemctl --user enable tahoe-cc.service tahoe-menus.service tahoe-osd.service tahoe-bartint.service spotlight-search.service \
   tahoe-health-sync.service konsole-hide-toolbars.path >/dev/null 2>&1 || true
 fi
 "$BIN/tahoe-health-check" --sync
@@ -292,7 +292,7 @@ if [ "$DO_LAYOUT" = 1 ]; then
 fi
 if [ "$SESSION" = 1 ]; then
   gdbus call --session -d org.kde.KWin -o /KWin -m org.kde.KWin.reconfigure >/dev/null 2>&1 || true
-  for s in tahoe-cc tahoe-menus tahoe-osd spotlight-search; do systemctl --user restart "$s" || true; done
+  for s in tahoe-cc tahoe-menus tahoe-osd tahoe-bartint spotlight-search; do systemctl --user restart "$s" || true; done
   systemctl --user restart plasma-plasmashell.service || true
 fi
 

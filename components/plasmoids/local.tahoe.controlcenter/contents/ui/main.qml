@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import org.kde.plasma.plasmoid
+import org.kde.kirigami as Kirigami
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.plasma5support as Support
 import org.kde.plasma.workspace.dbus as DBus
@@ -8,6 +9,7 @@ import org.kde.plasma.workspace.dbus as DBus
 // Menu bar button: toggles the floating Tahoe Control Center window (~/.local/share/tahoe-cc)
 PlasmoidItem {
     id: root
+    readonly property bool darkText: Kirigami.Theme.textColor.hslLightness < 0.5
     Plasmoid.backgroundHints: PlasmaCore.Types.NoBackground
     preferredRepresentation: fullRepresentation
     toolTipMainText: "Denetim Merkezi"
@@ -40,13 +42,13 @@ PlasmoidItem {
             anchors.centerIn: parent
             width: parent.height + 4; height: parent.height - 6
             radius: height / 2
-            color: root.ccOpen ? "#40ffffff" : (btn.containsMouse ? "#22ffffff" : "transparent")
+            color: root.ccOpen ? (root.darkText ? "#26000000" : "#40ffffff") : (btn.containsMouse ? (root.darkText ? "#14000000" : "#22ffffff") : "transparent")
         }
         Image {
             anchors.centerIn: parent
             width: 16; height: 16
             sourceSize: Qt.size(32, 32)
-            source: Qt.resolvedUrl("../icons/controlcenter.svg")
+            source: Qt.resolvedUrl(root.darkText ? "../icons/controlcenter-dark.svg" : "../icons/controlcenter.svg")
         }
     }
 }

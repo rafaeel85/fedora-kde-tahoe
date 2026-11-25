@@ -7,6 +7,7 @@ import org.kde.plasma.plasma5support as P5
 import org.kde.plasma.networkmanagement as PlasmaNM
 import org.kde.plasma.workspace.dbus as DBus
 import org.kde.plasma.workspace.keyboardlayout as KB
+import org.kde.kirigami as Kirigami
 
 // One macOS Tahoe menu-bar extra. kind = apple | wifi | battery | clock | weather | input.
 // Clicking toggles the matching menu of the Tahoe menus window (~/.local/share/tahoe-menus).
@@ -17,6 +18,12 @@ PlasmoidItem {
     preferredRepresentation: fullRepresentation
     toolTipMainText: ({ apple: "", wifi: "Wi-Fi", battery: "Pil", clock: Qt.formatDate(now, Qt.locale().dateFormat(Locale.LongFormat)), weather: wxPlace, input: kbName })[kind] || ""
     toolTipSubText: ({ wifi: ci.connectionTooltipIcon !== "" ? wifiSsid : "", battery: battPercent + "%" + (onAC ? " · Güç adaptörü" : ""), weather: wxTemp })[kind] || ""
+
+    // menu-bar foreground follows the bar tint (set panel-wide by local.tahoe.appname)
+    readonly property bool darkText: Kirigami.Theme.textColor.hslLightness < 0.5
+    readonly property color fg: darkText ? "#000000" : "#ffffff"
+    readonly property string fgHex: darkText ? "#000" : "#fff"
+    function fgA(a) { return Qt.rgba(fg.r, fg.g, fg.b, a) }
 
     // ---------------------------------------------------------------- open/close
     P5.DataSource {
@@ -101,15 +108,15 @@ PlasmoidItem {
     readonly property string wifiGlyph: {
         const icon = String(ci.connectionIcon)
         if (/wired/.test(icon))   // ethernet: <··>
-            return "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="64" height="47" viewBox="-2.5 -5 24 24"><g fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7l-5 5 5 5M17 7l5 5-5 5"/></g><g fill="#fff"><circle cx="8.5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="15.5" cy="12" r="1.4"/></g></svg>')
+            return "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="64" height="47" viewBox="-2.5 -5 24 24"><g fill="none" stroke="' + root.fgHex + '" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7l-5 5 5 5M17 7l5 5-5 5"/></g><g fill="' + root.fgHex + '"><circle cx="8.5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="15.5" cy="12" r="1.4"/></g></svg>')
         const lv = wifiLevel
         const o = i => (lv < 0 ? 0.3 : (i <= lv ? 1 : 0.3))
-        let s = '<g><path d="M9.500 12.900L6.954 10.354A3.6 3.6 0 0 1 12.046 10.354Z" fill="' + "#fff" + '" stroke="' + "#fff" + '" stroke-width="1" stroke-linejoin="round" opacity="' + o(1) + '"/><path d="M3.843 7.243A8.0 8.0 0 0 1 15.157 7.243A1.25 1.25 0 0 1 13.389 9.011A5.5 5.5 0 0 0 5.611 9.011A1.25 1.25 0 0 1 3.843 7.243Z" fill="' + "#fff" + '" opacity="' + o(2) + '"/><path d="M0.732 4.132A12.4 12.4 0 0 1 18.268 4.132A1.25 1.25 0 0 1 16.500 5.900A9.9 9.9 0 0 0 2.500 5.900A1.25 1.25 0 0 1 0.732 4.132Z" fill="' + "#fff" + '" opacity="' + o(3) + '"/></g>'
-        if (lv < 0 && !ci.connecting) s += '<path d="M2.5 1l16.5 14" stroke="#fff" stroke-width="1.9" stroke-linecap="round"/>'
+        let s = '<g><path d="M9.500 12.900L6.954 10.354A3.6 3.6 0 0 1 12.046 10.354Z" fill="' + root.fgHex + '" stroke="' + root.fgHex + '" stroke-width="1" stroke-linejoin="round" opacity="' + o(1) + '"/><path d="M3.843 7.243A8.0 8.0 0 0 1 15.157 7.243A1.25 1.25 0 0 1 13.389 9.011A5.5 5.5 0 0 0 5.611 9.011A1.25 1.25 0 0 1 3.843 7.243Z" fill="' + root.fgHex + '" opacity="' + o(2) + '"/><path d="M0.732 4.132A12.4 12.4 0 0 1 18.268 4.132A1.25 1.25 0 0 1 16.500 5.900A9.9 9.9 0 0 0 2.500 5.900A1.25 1.25 0 0 1 0.732 4.132Z" fill="' + root.fgHex + '" opacity="' + o(3) + '"/></g>'
+        if (lv < 0 && !ci.connecting) s += '<path d="M2.5 1l16.5 14" stroke="' + root.fgHex + '" stroke-width="1.9" stroke-linecap="round"/>'
         return "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="19" height="14" viewBox="0 0 19 14">' + s + '</svg>')
     }
     function weatherGlyph(icon) {
-        const n = String(icon || ""), W = "#fff"
+        const n = String(icon || ""), W = root.fgHex
         const cloud = '<path fill="' + W + '" d="M6.8 19.5h10.6a4.3 4.3 0 0 0 .5-8.57A6.2 6.2 0 0 0 6.1 9.9 4.8 4.8 0 0 0 6.8 19.5z"/>'
         const up = c => '<g transform="translate(0 -3.2)">' + c + '</g>'
         const sun = (cx, cy, r, s) => '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + W + '"/><g stroke="' + W + '" stroke-width="' + s + '" stroke-linecap="round" transform="translate(' + cx + ' ' + cy + ')">'
@@ -154,7 +161,7 @@ PlasmoidItem {
             anchors.centerIn: parent
             width: parent.width; height: Math.min(parent.height - 6, 24)
             radius: height / 2
-            color: root.open ? "#40ffffff" : (btn.containsMouse ? "#1fffffff" : "transparent")
+            color: root.open ? (root.darkText ? "#26000000" : "#40ffffff") : (btn.containsMouse ? (root.darkText ? "#14000000" : "#1fffffff") : "transparent")
             Behavior on color { ColorAnimation { duration: 100 } }
         }
 
@@ -177,7 +184,7 @@ PlasmoidItem {
         // Apple logo (same shape as the old kickerdash icon), drawn at exact 1x pixel size
         Image {
             width: 16; height: 16; sourceSize: Qt.size(16, 16)
-            source: "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="#fff" d="M11.881 8.5c-.02-2 1.653-3 1.727-3-.94-1.4-2.404-1.6-2.925-1.6-1.246-.2-2.432.7-3.064.7-.63 0-1.606-.7-2.64-.7-1.358 0-2.61.8-3.31 2C.26 8.4 1.31 12 2.684 14c.673.9 1.474 2 2.526 2 1.013 0 1.396-.7 2.621-.7s1.57.7 2.642.7c1.09 0 1.781-1 2.448-2 .771-1.1 1.089-2.2 1.108-2.3-.024 0-2.126-.8-2.147-3.2zM9.866 2.6c.559-.7.936-1.7.833-2.6-.804 0-1.78.5-2.357 1.2-.517.6-.97 1.6-.85 2.5.899.1 1.815-.5 2.374-1.1z"/></svg>')
+            source: "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="' + root.fgHex + '" d="M11.881 8.5c-.02-2 1.653-3 1.727-3-.94-1.4-2.404-1.6-2.925-1.6-1.246-.2-2.432.7-3.064.7-.63 0-1.606-.7-2.64-.7-1.358 0-2.61.8-3.31 2C.26 8.4 1.31 12 2.684 14c.673.9 1.474 2 2.526 2 1.013 0 1.396-.7 2.621-.7s1.57.7 2.642.7c1.09 0 1.781-1 2.448-2 .771-1.1 1.089-2.2 1.108-2.3-.024 0-2.126-.8-2.147-3.2zM9.866 2.6c.559-.7.936-1.7.833-2.6-.804 0-1.78.5-2.357 1.2-.517.6-.97 1.6-.85 2.5.899.1 1.815-.5 2.374-1.1z"/></svg>')
         }
     }
     Component {
@@ -188,7 +195,7 @@ PlasmoidItem {
         id: clockC
         Text {
             text: root.now.toLocaleString(Qt.locale(), "ddd d MMM") + "   " + Qt.formatTime(root.now, "HH:mm")
-            color: "white"
+            color: root.fg
             font.family: "Inter"; font.pixelSize: 13; font.weight: Font.Medium
         }
     }
@@ -197,17 +204,17 @@ PlasmoidItem {
         Row {
             spacing: 4
             Image { anchors.verticalCenter: parent.verticalCenter; width: 17; height: 17; sourceSize: Qt.size(48, 48); source: root.weatherGlyph(root.wxIcon) }
-            Text { anchors.verticalCenter: parent.verticalCenter; text: root.wxTemp; color: "white"; font.family: "Inter"; font.pixelSize: 13; font.weight: Font.Medium }
+            Text { anchors.verticalCenter: parent.verticalCenter; text: root.wxTemp; color: root.fg; font.family: "Inter"; font.pixelSize: 13; font.weight: Font.Medium }
         }
     }
     Component {
         id: inputC
         Rectangle {
             height: 15; width: Math.max(20, lbl.implicitWidth + 7); radius: 4
-            color: "transparent"; border.width: 1; border.color: "white"
+            color: "transparent"; border.width: 1; border.color: root.fg
             Text {
                 id: lbl; anchors.centerIn: parent; anchors.verticalCenterOffset: 0.5
-                text: root.kbShort; color: "white"
+                text: root.kbShort; color: root.fg
                 font.family: "Inter"; font.pixelSize: 10; font.weight: Font.DemiBold
             }
         }
@@ -221,7 +228,7 @@ PlasmoidItem {
             readonly property bool pct: Plasmoid.configuration.showPercent
             readonly property bool plug: root.charging || root.onAC
             readonly property real level: Math.min(100, Math.max(0, root.battPercent)) / 100
-            readonly property color fillColor: root.battPercent <= 10 && !root.onAC ? "#ff453a" : (root.charging ? "#30d158" : "#ffffff")
+            readonly property color fillColor: root.battPercent <= 10 && !root.onAC ? "#ff453a" : (root.charging ? "#30d158" : root.fg)
             width: shell.width + 3; height: 14
             Rectangle {   // rounded mask for the shell contents
                 id: shellMask
@@ -233,8 +240,8 @@ PlasmoidItem {
                 width: bat.pct ? 27 : 24; height: bat.pct ? 13 : 12.5
                 radius: 4.2
                 anchors.verticalCenter: parent.verticalCenter
-                color: bat.pct ? "#40ffffff" : "transparent"
-                border.width: bat.pct ? 0 : 1; border.color: "#8cffffff"
+                color: bat.pct ? root.fgA(0.25) : "transparent"
+                border.width: bat.pct ? 0 : 1; border.color: root.fgA(0.55)
                 layer.enabled: bat.pct
                 layer.smooth: true
                 layer.effect: MultiEffect {
@@ -261,7 +268,7 @@ PlasmoidItem {
                     Row {
                         x: (shell.width - width) / 2 - parent.x; y: (shell.height - height) / 2
                         Image { visible: false; width: 7; height: 9; anchors.verticalCenter: parent.verticalCenter; sourceSize: Qt.size(28, 36); source: root.svg('<path fill="#fff" d="M13.5 2L5 13.5h6L9.8 22 19 10h-6.2z"/>') }
-                        Text { text: root.battPercent; color: "white"; font.family: "Inter"; font.pixelSize: 10; font.weight: Font.Bold }
+                        Text { text: root.battPercent; color: root.fg; font.family: "Inter"; font.pixelSize: 10; font.weight: Font.Bold }
                     }
                 }
                 Image {   // charging bolt without percentage
@@ -274,7 +281,7 @@ PlasmoidItem {
             Rectangle {   // terminal cap
                 x: shell.width + 1; anchors.verticalCenter: parent.verticalCenter
                 width: 1.8; height: 4.5; radius: 1
-                color: bat.pct ? "#66ffffff" : "#8cffffff"
+                color: bat.pct ? root.fgA(0.4) : root.fgA(0.55)
             }
         }
     }

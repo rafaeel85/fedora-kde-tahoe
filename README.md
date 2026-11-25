@@ -22,7 +22,7 @@ menu bar, Control Center, Spotlight, a Dock, an Alt+Tab switcher, a lock screen 
 
 | Piece | What it is |
 |---|---|
-| **Menu bar** | Apple menu, bold app name, global app menus, weather, input source, battery (with Energy Mode), Wi-Fi, Control Center, Spotlight button, clock. The menus are glass popups that switch when you hover. |
+| **Menu bar** | Apple menu, bold app name, global app menus, weather, input source, battery (with Energy Mode), Wi-Fi, Control Center, Spotlight button, clock. The menus are glass popups that switch when you hover. The bar text turns black on light wallpapers and white on dark ones. |
 | **Control Center** | Wi-Fi, Bluetooth, Airplane, Focus (Do Not Disturb), Night Light, brightness and volume sliders, now playing |
 | **Spotlight** (`Meta+X`) | Apps, files, actions and clipboard modes. Apps view is an App-Store–style card with categories and suggestions |
 | **Dock** | [WaveTask](https://github.com/vickoc911/org.vicko.wavetask) with a "Tahoe Liquid" skin, macOS red badges, and `Meta+1…9` to open dock items |
