@@ -144,6 +144,51 @@ view.setColor(QColor('transparent'))
 view.setFlags(Qt.Tool | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
 view.setTitle('tahoe-menu@0')
 view.engine().addImportPath('@QTQML@')
+# --- adaptive glass (2026-11-26): QML darkens the glass on light wallpapers so white text stays
+# readable (macOS dark-mode style). glassTone.dim: 0 = dark wallpaper (unchanged) .. 1 = white wallpaper.
+# Wallpaper lightness comes from tahoe-bartint (local.TahoeBar glassLightness / glassLightnessChanged).
+from PySide6.QtCore import Property as _GProp, SLOT as _GSLOT
+from PySide6.QtDBus import QDBusInterface as _GQDI
+class GlassTone(QObject):
+    # dim: 0..1 how much the glass is made more solid so text stays readable
+    #   dark appearance: grows on LIGHT wallpapers (glass -> dark); light appearance: grows on DARK wallpapers (glass -> white)
+    # light: system appearance is light (black text, light glass)
+    dimChanged = Signal()
+    lightChanged = Signal()
+    def __init__(self):
+        super().__init__(); self._d = 0.0; self._v = -1.0; self._light = False
+        b = QDBusConnection.sessionBus()
+        b.connect('local.TahoeBar', '/Bar', 'local.TahoeBar', 'glassLightnessChanged', self, _GSLOT('onL(double)'))
+        b.connect('local.TahoeBar', '/Bar', 'local.TahoeBar', 'appearanceChanged', self, _GSLOT('onA(QString)'))
+        bar = _GQDI('local.TahoeBar', '/Bar', 'local.TahoeBar', b)
+        a = bar.call('appearance').arguments()
+        if a: self.onA(a[0])
+        a = bar.call('glassLightness').arguments()
+        if a: self.onL(a[0])
+    def _recalc(self):
+        v = self._v
+        if v < 0: d = 0.0
+        elif self._light: d = 0.0 if v > 0.55 else min(1.0, (0.55 - v) / 0.35)
+        else: d = 0.0 if v < 0.45 else min(1.0, (v - 0.45) / 0.35)
+        if abs(d - self._d) > 0.01:
+            self._d = d; self.dimChanged.emit()
+    @Slot(float)
+    def onL(self, v):
+        try: self._v = float(v)
+        except (TypeError, ValueError): return
+        self._recalc()
+    @Slot(str)
+    def onA(self, a):
+        l = (str(a) == 'light')
+        if l != self._light:
+            self._light = l; self.lightChanged.emit()
+        self._recalc()
+    def _dim(self): return self._d
+    def _lt(self): return self._light
+    dim = _GProp(float, _dim, notify=dimChanged)
+    light = _GProp(bool, _lt, notify=lightChanged)
+glassTone = GlassTone()
+view.rootContext().setContextProperty('glassTone', glassTone)
 view.rootContext().setContextProperty('bridge', bridge)
 view.rootContext().setContextProperty('weatherSource', weather_source())
 view.setSource(QUrl.fromLocalFile(str(HERE / 'main.qml')))

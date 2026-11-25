@@ -24,13 +24,27 @@ Item {
     height: m + (page === "main" ? mainGrid.height : detail.height) + m
 
     // ------------------------------------------------------------ palette
-    readonly property color glassFill: "#30ffffff"
-    readonly property color glassHover: "#40ffffff"
+    // adaptive glass (2026-11-26): darker glass on light wallpapers (glassTone.dim 0..1 from app.py)
+    readonly property real dim: typeof glassTone !== "undefined" ? glassTone.dim : 0
+    // appearance (2026-11-26): light = system light mode (black text, light glass); from app.py glassTone
+    readonly property bool light: typeof glassTone !== "undefined" && glassTone.light
+    function fg(a) { return light ? Qt.rgba(0, 0, 0, a) : Qt.rgba(1, 1, 1, a) }       // overlay / dim text
+    readonly property color fgHex: light ? "#1d1d1f" : "#ffffff"                     // glyph tint
+    // tone(darkColour, darkSolidAlpha, lightColour, lightSolidAlpha): glass fill for the current appearance,
+    // pushed towards a solid dark (dark mode) / white (light mode) glass by dim
+    function tone(c, a2, lc, la2) {
+        c = Qt.color(light && lc !== undefined ? lc : c)
+        const t = light ? [0.97, 0.97, 0.98] : [0.10, 0.10, 0.11]
+        const A = light && la2 !== undefined ? la2 : a2
+        return Qt.rgba(c.r + (t[0] - c.r) * dim, c.g + (t[1] - c.g) * dim, c.b + (t[2] - c.b) * dim, c.a + (A - c.a) * dim)
+    }
+    readonly property color glassFill: tone("#30ffffff", 0.55, "#d4f6f6f8", 0.92)
+    readonly property color glassHover: tone("#40ffffff", 0.62, "#e6ffffff", 0.96)
     readonly property color rimTop: "#80ffffff"
     readonly property color rimBottom: "#26ffffff"
     readonly property color accent: "#0a84ff"
-    readonly property color textMain: "#ffffff"
-    readonly property color textDim: "#c8ffffff"
+    readonly property color textMain: light ? "#1d1d1f" : "#ffffff"
+    readonly property color textDim: root.fg(0.784)
     readonly property string fontName: "Inter"
 
     // ------------------------------------------------------------ SF-like glyphs (24x24)
@@ -38,6 +52,7 @@ Item {
         wifi: '<g transform="translate(2.5 5)"><path d="M9.500 12.900L6.954 10.354A3.6 3.6 0 0 1 12.046 10.354Z" fill="C" stroke="C" stroke-width="1" stroke-linejoin="round"/><path d="M3.843 7.243A8.0 8.0 0 0 1 15.157 7.243A1.25 1.25 0 0 1 13.389 9.011A5.5 5.5 0 0 0 5.611 9.011A1.25 1.25 0 0 1 3.843 7.243Z" fill="C"/><path d="M0.732 4.132A12.4 12.4 0 0 1 18.268 4.132A1.25 1.25 0 0 1 16.500 5.900A9.9 9.9 0 0 0 2.500 5.900A1.25 1.25 0 0 1 0.732 4.132Z" fill="C"/></g>',
         bluetooth: '<path d="M6.8 7.2l10.2 9.4-5 4.6V2.8l5 4.6-10.2 9.4" fill="none" stroke="C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
         airplane: '<path fill="C" d="M21.5 15.6v-1.8l-8.2-5.2V3.9a1.3 1.3 0 0 0-2.6 0v4.7l-8.2 5.2v1.8l8.2-2.6v5l-2.3 1.7v1.4l3.6-1.1 3.6 1.1v-1.4L13.3 18v-5z"/>',
+        appearance: '<circle cx="12" cy="12" r="8.2" fill="none" stroke="C" stroke-width="1.9"/><path fill="C" d="M12 3.8a8.2 8.2 0 0 1 0 16.4z"/>',
         moon: '<path fill="C" d="M19.6 15.3A8.4 8.4 0 0 1 8.7 4.4a.6.6 0 0 0-.8-.7 9 9 0 1 0 12.4 12.4.6.6 0 0 0-.7-.8z"/>',
         stage: '<g fill="none" stroke="C" stroke-width="2"><rect x="8.5" y="5" width="12.5" height="14" rx="2.6"/></g><g fill="C"><rect x="3" y="5" width="3" height="3.6" rx="1"/><rect x="3" y="10.2" width="3" height="3.6" rx="1"/><rect x="3" y="15.4" width="3" height="3.6" rx="1"/></g>',
         mirror: '<g fill="none" stroke="C" stroke-width="2" stroke-linejoin="round"><path d="M14.5 7V6a2.4 2.4 0 0 0-2.4-2.4H5.4A2.4 2.4 0 0 0 3 6v6.6A2.4 2.4 0 0 0 5.4 15h1"/><rect x="8.5" y="8.6" width="12.5" height="11" rx="2.4"/></g>',
@@ -179,8 +194,8 @@ Item {
             anchors.fill: parent
             radius: parent.radius
             gradient: Gradient {
-                GradientStop { position: 0.0; color: "#1affffff" }
-                GradientStop { position: 0.45; color: "#00ffffff" }
+                GradientStop { position: 0.0; color: root.fg(0.102) }
+                GradientStop { position: 0.45; color: root.fg(0.000) }
             }
         }
         Rectangle {
@@ -213,12 +228,12 @@ Item {
         property bool on: false
         property real glyphScale: 0.42
         width: root.u; height: root.u
-        color: on ? (hovered ? "#e8ffffff" : "#ffffff") : (hovered ? root.glassHover : root.glassFill)
+        color: on ? (root.light ? (hovered ? Qt.lighter(root.accent, 1.12) : root.accent) : (hovered ? Qt.rgba(1, 1, 1, 0.91) : "#ffffff")) : (hovered ? root.glassHover : root.glassFill)
         Image {
             anchors.centerIn: parent
             width: Math.round(cb.width * cb.glyphScale); height: width
             sourceSize: Qt.size(width * 2, height * 2)
-            source: root.ic(cb.glyph, cb.on ? root.accent : "#ffffff")
+            source: root.ic(cb.glyph, cb.on ? (root.light ? "#ffffff" : root.accent) : root.fgHex)
         }
     }
 
@@ -228,12 +243,12 @@ Item {
         property string glyph
         property bool on: false
         width: 44; height: 44; radius: 22
-        color: on ? "#ffffff" : "#38ffffff"
+        color: on ? (root.light ? root.accent : "#ffffff") : root.fg(0.220)
         Image {
             anchors.centerIn: parent
             width: 21; height: 21
             sourceSize: Qt.size(48, 48)
-            source: root.ic(ic2.glyph, ic2.on ? root.accent : "#ffffff")
+            source: root.ic(ic2.glyph, ic2.on ? (root.light ? "#ffffff" : root.accent) : root.fgHex)
         }
     }
 
@@ -279,7 +294,7 @@ Item {
             id: lg
             anchors.verticalCenter: parent.verticalCenter
             width: ts.leftSize; height: width; sourceSize: Qt.size(48, 48)
-            source: root.ic(ts.leftGlyph, "#ffffff")
+            source: root.ic(ts.leftGlyph, root.fgHex)
             MouseArea { anchors.fill: parent; anchors.margins: -6; onClicked: ts.leftClicked() }
         }
         Image {
@@ -287,7 +302,7 @@ Item {
             anchors.right: parent.right; anchors.rightMargin: ts.rightReserve
             anchors.verticalCenter: parent.verticalCenter
             width: ts.rightSize; height: width; sourceSize: Qt.size(48, 48)
-            source: root.ic(ts.rightGlyph, "#ffffff")
+            source: root.ic(ts.rightGlyph, root.fgHex)
         }
         Item {
             id: trackArea
@@ -299,11 +314,11 @@ Item {
                 id: track
                 anchors.verticalCenter: parent.verticalCenter
                 width: parent.width; height: 9; radius: 4.5
-                color: "#40ffffff"
+                color: root.fg(0.251)
                 Rectangle {
                     width: Math.max(track.height, track.width * Math.min(1, Math.max(0, ts.shown)))
                     height: parent.height; radius: parent.radius
-                    color: "#ffffff"
+                    color: root.light ? "#3a3a3c" : "#ffffff"
                 }
             }
             MouseArea {
@@ -325,7 +340,7 @@ Item {
         property bool on: false
         signal toggled()
         width: 40; height: 24; radius: 12
-        color: on ? root.accent : "#45ffffff"
+        color: on ? root.accent : root.fg(0.271)
         Behavior on color { ColorAnimation { duration: 150 } }
         Rectangle {
             width: 20; height: 20; radius: 10; y: 2
@@ -356,7 +371,7 @@ Item {
             id: mainGrid
             visible: root.page === "main"
             width: root.fullW
-            height: 6 * root.u + 5 * root.g
+            height: 7 * root.u + 6 * root.g
 
             // --- Wi-Fi capsule (cols 0-1, row 0)
             Glass {
@@ -395,7 +410,7 @@ Item {
                 Rectangle {
                     id: art
                     x: 14; y: 14; width: 46; height: 46; radius: 10
-                    color: "#33ffffff"; clip: true
+                    color: root.fg(0.200); clip: true
                     Image {
                         anchors.fill: parent
                         source: root.player ? root.player.artUrl : ""
@@ -406,7 +421,7 @@ Item {
                         anchors.centerIn: parent; width: 22; height: 22
                         sourceSize: Qt.size(48, 48)
                         visible: !root.player || !root.player.artUrl
-                        source: root.ic("note", "#dcdce0")
+                        source: root.ic("note", root.light ? "#6e6e73" : "#dcdce0")
                     }
                 }
                 Column {
@@ -435,7 +450,7 @@ Item {
                                 anchors.centerIn: parent
                                 width: index === 1 ? 22 : 24; height: width
                                 sourceSize: Qt.size(48, 48)
-                                source: root.ic(index === 1 ? (root.playing ? "pause" : "play") : modelData, "#ffffff")
+                                source: root.ic(index === 1 ? (root.playing ? "pause" : "play") : modelData, root.fgHex)
                             }
                             MouseArea {
                                 anchors.fill: parent; anchors.margins: -6
@@ -512,10 +527,10 @@ Item {
                 Rectangle {
                     anchors.right: parent.right; anchors.rightMargin: 12
                     y: 30; width: 28; height: 28; radius: 14
-                    color: "#38ffffff"
+                    color: root.fg(0.220)
                     Image {
                         anchors.centerIn: parent; width: 17; height: 17; sourceSize: Qt.size(48, 48)
-                        source: root.ic("airplay", "#ffffff")
+                        source: root.ic("airplay", root.fgHex)
                     }
                     MouseArea { anchors.fill: parent; onClicked: root.launch("kcmshell6 kcm_pulseaudio") }
                 }
@@ -541,7 +556,24 @@ Item {
                     }
                 }
             }
+            // --- Light / Dark appearance capsule (row 6) -> ~/.local/bin/tahoe-appearance (like macOS "Dark Mode")
+            Glass {
+                x: 0; y: 6 * (root.u + root.g); width: root.w2; height: root.u
+                onClicked: bridge.run("\"$HOME/.local/bin/tahoe-appearance\" toggle")
+                InnerCircle {
+                    x: 9; anchors.verticalCenter: parent.verticalCenter
+                    glyph: "appearance"; on: !root.light
+                    MouseArea { anchors.fill: parent; onClicked: bridge.run("\"$HOME/.local/bin/tahoe-appearance\" toggle") }
+                }
+                Column {
+                    x: 62; anchors.verticalCenter: parent.verticalCenter
+                    width: parent.width - x - 10
+                    Title { text: "Görünüm"; width: parent.width }
+                    Sub { text: root.light ? "Açık" : "Koyu"; width: parent.width }
+                }
+            }
         }
+
 
         // ===================================================== DETAIL (Wi-Fi / Bluetooth)
         Glass {
@@ -557,7 +589,7 @@ Item {
                 x: 0; y: 0; width: parent.width; height: 52
                 Item {
                     x: 8; y: 10; width: 32; height: 32
-                    Image { anchors.centerIn: parent; width: 16; height: 16; sourceSize: Qt.size(48, 48); source: root.ic("back", "#ffffff") }
+                    Image { anchors.centerIn: parent; width: 16; height: 16; sourceSize: Qt.size(48, 48); source: root.ic("back", root.fgHex) }
                     MouseArea { anchors.fill: parent; onClicked: root.page = "main" }
                 }
                 Title {
@@ -574,7 +606,7 @@ Item {
                         else root.setBluetooth(!root.btOn)
                     }
                 }
-                Rectangle { x: 14; y: parent.height - 1; width: parent.width - 28; height: 1; color: "#26ffffff" }
+                Rectangle { x: 14; y: parent.height - 1; width: parent.width - 28; height: 1; color: root.fg(0.149) }
             }
 
             PlasmaNM.NetworkModel { id: networkModel }
@@ -618,12 +650,12 @@ Item {
                     height: isWifi ? implicitHeight : 0
                     Rectangle {
                         width: parent.width; height: 44; radius: 12
-                        color: rowMa.containsMouse ? "#1fffffff" : "transparent"
+                        color: rowMa.containsMouse ? root.fg(0.122) : "transparent"
                         Rectangle {
                             x: 6; anchors.verticalCenter: parent.verticalCenter
                             width: 30; height: 30; radius: 15
-                            color: parent.parent.active ? root.accent : "#33ffffff"
-                            Image { anchors.centerIn: parent; width: 16; height: 16; sourceSize: Qt.size(48, 48); source: root.ic("wifi", "#ffffff") }
+                            color: parent.parent.active ? root.accent : root.fg(0.200)
+                            Image { anchors.centerIn: parent; width: 16; height: 16; sourceSize: Qt.size(48, 48); source: root.ic("wifi", root.fgHex) }
                         }
                         Text {
                             x: 46; anchors.verticalCenter: parent.verticalCenter
@@ -638,7 +670,7 @@ Item {
                             anchors.verticalCenter: parent.verticalCenter
                             width: 13; height: 13; sourceSize: Qt.size(48, 48)
                             visible: parent.parent.secured
-                            source: root.ic("lock", "#c4c4c8")
+                            source: root.ic("lock", root.light ? "#6e6e73" : "#c4c4c8")
                         }
                         C.BusyIndicator {
                             anchors.right: parent.right; anchors.rightMargin: 30
@@ -696,14 +728,14 @@ Item {
                     visible: !!dev && dev.paired
                     height: visible ? 44 : 0
                     radius: 12
-                    color: bma.containsMouse ? "#1fffffff" : "transparent"
+                    color: bma.containsMouse ? root.fg(0.122) : "transparent"
                     Rectangle {
                         x: 6; anchors.verticalCenter: parent.verticalCenter
                         width: 30; height: 30; radius: 15
-                        color: parent.conn ? root.accent : "#33ffffff"
+                        color: parent.conn ? root.accent : root.fg(0.200)
                         Image {
                             anchors.centerIn: parent; width: 16; height: 16; sourceSize: Qt.size(48, 48)
-                            source: root.ic(parent.parent.dev && /audio|headset|head/i.test(String(parent.parent.dev.icon)) ? "headphones" : "device", "#ffffff")
+                            source: root.ic(parent.parent.dev && /audio|headset|head/i.test(String(parent.parent.dev.icon)) ? "headphones" : "device", root.fgHex)
                         }
                     }
                     Text {
@@ -735,10 +767,10 @@ Item {
                 id: footer
                 anchors.bottom: parent.bottom; anchors.bottomMargin: 6
                 width: parent.width; height: 40
-                Rectangle { x: 14; y: 0; width: parent.width - 28; height: 1; color: "#26ffffff" }
+                Rectangle { x: 14; y: 0; width: parent.width - 28; height: 1; color: root.fg(0.149) }
                 Rectangle {
                     x: 8; y: 5; width: parent.width - 16; height: 32; radius: 10
-                    color: fma.containsMouse ? "#1fffffff" : "transparent"
+                    color: fma.containsMouse ? root.fg(0.122) : "transparent"
                     Text {
                         x: 10; anchors.verticalCenter: parent.verticalCenter
                         text: root.page === "wifi" ? "Wi-Fi Ayarları…" : "Bluetooth Ayarları…"

@@ -30,7 +30,8 @@ menu bar, Control Center, Spotlight, a Dock, an Alt+Tab switcher, a lock screen 
 | **Lock screen / shutdown dialog** | Big clock and glass password field. The shutdown dialog is a macOS-style alert with a 60 s countdown |
 | **Notifications / OSD** | Banners at the top right, file-copy progress, and a volume/brightness HUD |
 | **Windows** | Genie minimize, centred new windows, and a MacTahoe decoration with ▢ ✕ buttons on the right. App menus (Kvantum) use the same blurred glass as the menu-bar menus |
-| **Terminal / Files** | Konsole styled like Terminal.app, and Finder-style blue sidebar icons in Dolphin |
+| **Terminal / Files** | Konsole styled like Terminal.app (white glass in Light, dark glass in Dark), and Finder-style blue sidebar icons in Dolphin |
+| **Light & Dark** | One switch, like macOS Appearance: the **Görünüm** tile in Control Center or `tahoe-appearance light\|dark\|toggle`. Colours, Kvantum, icons, GTK/Flatpak, window decoration, Plasma style, Konsole and all Tahoe apps change together. Glass adapts to the wallpaper so text stays readable |
 | **Safety net** | `tahoe-health-check` runs at login. After a Plasma update it turns broken pieces off and goes back to KDE's defaults (you never get a broken lock screen) |
 
 ## Install
@@ -63,6 +64,17 @@ sudo dnf install kwin-effects-better-blur-dx
 # Arch (AUR)
 yay -S kwin-effects-better-blur-dx
 ```
+
+**Optional, for macOS rounded corners on all four window corners** ([KDE Rounded Corners](https://github.com/matinlotfali/KDE-Rounded-Corners)):
+```bash
+# Fedora
+sudo dnf copr enable matinlotfali/KDE-Rounded-Corners
+sudo dnf install kwin-effect-roundcorners
+```
+Other distros: see the project page. When the effect is installed, `tahoe-appearance` sets it up (radius 16 squircle, outline per appearance).
+The effect must match your KWin version, so update it together with Plasma.
+
+> Do **not** apply a *Global Theme* in System Settings: it replaces the menu bar, Dock, decoration and wallpaper. Use `tahoe-appearance` for Light/Dark.
 
 ### Notes
 - The UI text in the Tahoe components is **Turkish** for now (`Denetim Merkezi`, `Uyut`, …). Translations are welcome.

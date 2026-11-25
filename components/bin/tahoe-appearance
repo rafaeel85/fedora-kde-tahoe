@@ -1,0 +1,44 @@
+#!/bin/bash
+# tahoe-appearance light|dark|toggle|status — switch the whole Tahoe desktop between macOS Light and Dark.
+# Colour scheme, Qt widget style (Kvantum), icons, GTK (+ Flatpak). Tahoe helper apps (Spotlight, Control Center,
+# menus) follow automatically via tahoe-bartint (local.TahoeBar appearance()). Panel layout is NOT touched
+# (never use lookandfeeltool here: it would reset the menu bar and Dock).
+set -u
+cur() { gdbus call --session -d local.TahoeBar -o /Bar -m local.TahoeBar.appearance 2>/dev/null | grep -o "light\|dark" || echo dark; }
+mode=${1:-status}
+[ "$mode" = status ] && { cur; exit 0; }
+[ "$mode" = toggle ] && { [ "$(cur)" = light ] && mode=dark || mode=light; }
+case "$mode" in
+  light) SCHEME=MacTahoeLight; STYLE=kvantum;      KV=MacTahoe;     ICONS=MacTahoe;      GTK=MacTahoe-Light; PREF=prefer-light; DARKGTK=false; DECO=MacTahoe-Light-Windows; PLASMA=MacTahoe-Light-Clear ;;
+  dark)  SCHEME=MacTahoeDark;  STYLE=kvantum-dark; KV=MacTahoeDark; ICONS=MacTahoe-dark; GTK=MacTahoe-Dark;  PREF=prefer-dark;  DARKGTK=true;  DECO=MacTahoe-Dark-Windows;  PLASMA=MacTahoe-Dark-Clear ;;
+  *) echo "usage: tahoe-appearance light|dark|toggle|status" >&2; exit 2 ;;
+esac
+kw() { kwriteconfig6 --file "$1" --group "$2" --key "$3" "$4"; }
+kw kdeglobals KDE widgetStyle "$STYLE"
+kw "$HOME/.config/Kvantum/kvantum.kvconfig" General theme "$KV"
+plasma-apply-colorscheme "$SCHEME" >/dev/null
+# Plasma style (transparent menu bar variants): notifications, Alt+Tab and KDE popups follow it
+plasma-apply-desktoptheme "$PLASMA" >/dev/null 2>&1
+# window decoration (Tahoe ▢ ✕ buttons on the right)
+kw kwinrc org.kde.kdecoration2 library org.kde.kwin.aurorae.v2
+kw kwinrc org.kde.kdecoration2 theme "__aurorae__svg__$DECO"
+gdbus call --session -d org.kde.KWin -o /KWin -m org.kde.KWin.reconfigure >/dev/null 2>&1
+# Konsole: light/dark profile for all open terminals
+[ -x "$HOME/.local/bin/tahoe-konsole" ] && "$HOME/.local/bin/tahoe-konsole" "$mode"
+# rounded corners + outline (KDE Rounded Corners effect, if installed)
+[ -x "$HOME/.local/bin/tahoe-corners" ] && gdbus call --session -d org.kde.KWin -o /Effects -m org.freedesktop.DBus.Properties.Get org.kde.kwin.Effects listOfEffects 2>/dev/null | grep -q kwin4_effect_shapecorners && "$HOME/.local/bin/tahoe-corners" "$mode"
+/usr/libexec/plasma-changeicons "$ICONS" >/dev/null 2>&1
+# GTK 3/4 + portal + xsettingsd + Flatpak
+gsettings set org.gnome.desktop.interface gtk-theme "$GTK"
+gsettings set org.gnome.desktop.interface color-scheme "$PREF"
+for f in "$HOME/.config/gtk-3.0/settings.ini" "$HOME/.config/gtk-4.0/settings.ini"; do
+  [ -f "$f" ] || continue
+  sed -i "s/^gtk-application-prefer-dark-theme=.*/gtk-application-prefer-dark-theme=$DARKGTK/" "$f"
+  grep -q '^gtk-theme-name=' "$f" && sed -i "s/^gtk-theme-name=.*/gtk-theme-name=$GTK/" "$f"
+done
+X="$HOME/.config/xsettingsd/xsettingsd.conf"
+[ -f "$X" ] && sed -i "s|^Net/ThemeName .*|Net/ThemeName \"$GTK\"|" "$X" && pkill -HUP -x xsettingsd
+command -v flatpak >/dev/null && flatpak override --user --env=GTK_THEME="$GTK" 2>/dev/null
+# tell running Qt/KDE apps that the widget style changed (KGlobalSettings::StyleChanged = 2)
+gdbus emit --session -o /KGlobalSettings -s org.kde.KGlobalSettings.notifyChange 2 0 >/dev/null 2>&1
+echo "$mode"

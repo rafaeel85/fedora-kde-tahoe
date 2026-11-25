@@ -6,6 +6,7 @@ import org.kde.notificationmanager as NotificationManager
 
 Item {
     id: card
+    readonly property bool light: Kirigami.Theme.backgroundColor.hslLightness > 0.5   // light Plasma style (tahoe-appearance)
 
     // data
     property int type: NotificationManager.Notifications.NotificationType
@@ -123,14 +124,14 @@ Item {
                     textFormat: Text.PlainText
                     elide: Text.ElideRight
                     maximumLineCount: 1
-                    color: "white"
+                    color: card.light ? "#1d1d1f" : "white"
                     font.family: card.font
                     font.pixelSize: 13
                     font.weight: Font.DemiBold
                 }
                 Text {
                     text: card.isJob ? (card.percentage + "%") : card.ago()
-                    color: Qt.rgba(1, 1, 1, 0.55)
+                    color: (card.light ? Qt.rgba(0, 0, 0, 0.55) : Qt.rgba(1, 1, 1, 0.55))
                     font.family: card.font
                     font.pixelSize: 11
                 }
@@ -144,7 +145,7 @@ Item {
                 wrapMode: Text.Wrap
                 elide: Text.ElideRight
                 maximumLineCount: card.isJob ? 2 : 4
-                color: Qt.rgba(1, 1, 1, 0.86)
+                color: (card.light ? Qt.rgba(0, 0, 0, 0.86) : Qt.rgba(1, 1, 1, 0.86))
                 linkColor: "#64b5ff"
                 font.family: card.font
                 font.pixelSize: 13
@@ -161,7 +162,7 @@ Item {
                 Rectangle {
                     Layout.fillWidth: true
                     height: 5; radius: 2.5
-                    color: Qt.rgba(1, 1, 1, 0.18)
+                    color: (card.light ? Qt.rgba(0, 0, 0, 0.18) : Qt.rgba(1, 1, 1, 0.18))
                     Rectangle {
                         height: parent.height; radius: parent.radius
                         width: parent.width * Math.max(0, Math.min(100, card.percentage)) / 100
@@ -179,7 +180,7 @@ Item {
                         required property var modelData
                         visible: modelData.show
                         width: 22; height: 22; radius: 11
-                        color: jm.containsMouse ? Qt.rgba(1, 1, 1, 0.25) : Qt.rgba(1, 1, 1, 0.14)
+                        color: jm.containsMouse ? (card.light ? Qt.rgba(0, 0, 0, 0.25) : Qt.rgba(1, 1, 1, 0.25)) : (card.light ? Qt.rgba(0, 0, 0, 0.14) : Qt.rgba(1, 1, 1, 0.14))
                         Kirigami.Icon { anchors.centerIn: parent; width: 12; height: 12; source: modelData.icon; isMask: true; color: "white" }
                         MouseArea {
                             id: jm; anchors.fill: parent; hoverEnabled: true
@@ -194,7 +195,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.topMargin: 2
                 text: card.jobText
-                color: Qt.rgba(1, 1, 1, 0.6)
+                color: (card.light ? Qt.rgba(0, 0, 0, 0.6) : Qt.rgba(1, 1, 1, 0.6))
                 font.family: card.font
                 font.pixelSize: 11
                 font.features: { "tnum": 1 }
@@ -214,14 +215,14 @@ Item {
                         height: 26
                         width: Math.min(card.width - 70, lbl.implicitWidth + 24)
                         radius: 13
-                        color: am.pressed ? Qt.rgba(1, 1, 1, 0.30) : am.containsMouse ? Qt.rgba(1, 1, 1, 0.24) : Qt.rgba(1, 1, 1, 0.15)
+                        color: am.pressed ? (card.light ? Qt.rgba(0, 0, 0, 0.30) : Qt.rgba(1, 1, 1, 0.30)) : am.containsMouse ? (card.light ? Qt.rgba(0, 0, 0, 0.24) : Qt.rgba(1, 1, 1, 0.24)) : (card.light ? Qt.rgba(0, 0, 0, 0.15) : Qt.rgba(1, 1, 1, 0.15))
                         Text {
                             id: lbl
                             anchors.centerIn: parent
                             width: Math.min(implicitWidth, parent.width - 16)
                             elide: Text.ElideRight
                             text: card.actionLabels[index]
-                            color: "white"
+                            color: card.light ? "#1d1d1f" : "white"
                             font.family: card.font
                             font.pixelSize: 12
                             font.weight: Font.Medium
@@ -242,16 +243,16 @@ Item {
         Behavior on opacity { NumberAnimation { duration: 120 } }
         x: -2; y: -2
         width: 20; height: 20; radius: 10
-        color: closeMouse.containsMouse ? Qt.rgba(0.35, 0.35, 0.38, 1) : Qt.rgba(0.24, 0.24, 0.27, 1)
+        color: card.light ? (closeMouse.containsMouse ? Qt.rgba(0.86, 0.86, 0.88, 1) : Qt.rgba(0.94, 0.94, 0.95, 1)) : (closeMouse.containsMouse ? Qt.rgba(0.35, 0.35, 0.38, 1) : Qt.rgba(0.24, 0.24, 0.27, 1))
         border.width: 1
-        border.color: Qt.rgba(1, 1, 1, 0.22)
+        border.color: (card.light ? Qt.rgba(0, 0, 0, 0.22) : Qt.rgba(1, 1, 1, 0.22))
         Canvas {
             anchors.centerIn: parent
             width: 8; height: 8
             onPaint: {
                 const c = getContext("2d");
                 c.clearRect(0, 0, width, height);
-                c.strokeStyle = "white"; c.lineWidth = 1.6; c.lineCap = "round";
+                c.strokeStyle = card.light ? "#1d1d1f" : "white"; c.lineWidth = 1.6; c.lineCap = "round";
                 c.beginPath(); c.moveTo(1, 1); c.lineTo(7, 7); c.moveTo(7, 1); c.lineTo(1, 7); c.stroke();
             }
         }

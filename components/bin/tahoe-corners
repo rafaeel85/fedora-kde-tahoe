@@ -1,0 +1,25 @@
+#!/bin/bash
+# tahoe-corners light|dark — KDE Rounded Corners (kwin4_effect_shapecorners) settings for the macOS Tahoe look.
+# Called by tahoe-appearance. Radius 16 squircle on all 4 corners; outline differs per appearance.
+mode=${1:-dark}
+k() { kwriteconfig6 --file kwinrc --group Round-Corners --key "$1" "$2"; }
+k Size 16; k InactiveCornerRadius 16; k UseSquircleShape true; k Squircleness 0.55
+for p in Active Inactive; do k ${p}OutlineUseCustom true; k ${p}OutlineUsePalette false; k ${p}SecondOutlineUseCustom true; k ${p}SecondOutlineUsePalette false; done
+k OutlineThickness 1; k InactiveOutlineThickness 1
+k SecondOutlineThickness 1; k InactiveSecondOutlineThickness 1
+k OuterOutlineThickness 0; k InactiveOuterOutlineThickness 0
+# the effect's own shadow drew a dark arc at the top corners (over the decoration shadow) -> off
+k ShadowSize 0; k InactiveShadowSize 0
+if [ "$mode" = light ]; then
+  k OutlineColor 0,0,0; k InactiveOutlineColor 0,0,0; k ActiveOutlineAlpha 0; k InactiveOutlineAlpha 0   # light: the decoration draws the grey edge; an effect outline turns black over its transparent top corners
+  k SecondOutlineColor 255,255,255; k InactiveSecondOutlineColor 255,255,255; k ActiveSecondOutlineAlpha 0; k InactiveSecondOutlineAlpha 0
+else
+  k OutlineColor 0,0,0; k InactiveOutlineColor 0,0,0; k ActiveOutlineAlpha 220; k InactiveOutlineAlpha 180
+  k SecondOutlineColor 255,255,255; k InactiveSecondOutlineColor 255,255,255; k ActiveSecondOutlineAlpha 40; k InactiveSecondOutlineAlpha 26
+fi
+kwriteconfig6 --file kwinrc --group Plugins --key kwin4_effect_shapecornersEnabled true
+# KWin must re-read kwinrc FIRST, then reload the effect (reconfigureEffect alone keeps old colours)
+gdbus call --session -d org.kde.KWin -o /KWin -m org.kde.KWin.reconfigure >/dev/null 2>&1
+sleep 0.3
+gdbus call --session -d org.kde.KWin -o /Effects -m org.kde.kwin.Effects.unloadEffect kwin4_effect_shapecorners >/dev/null 2>&1
+gdbus call --session -d org.kde.KWin -o /Effects -m org.kde.kwin.Effects.loadEffect kwin4_effect_shapecorners >/dev/null 2>&1

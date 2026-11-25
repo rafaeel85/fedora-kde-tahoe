@@ -1,0 +1,10 @@
+#!/bin/bash
+# tahoe-konsole light|dark — Konsole profile for the appearance (macOS Terminal: white glass in light, Sequoia Glass in dark).
+# Sets the default profile and switches every open Konsole session over D-Bus. Called by tahoe-appearance.
+case "${1:-dark}" in light) P="Sequoia Glass Light"; F=SequoiaGlassLight.profile ;; *) P="Sequoia Glass"; F=SequoiaGlass.profile ;; esac
+kwriteconfig6 --file konsolerc --group "Desktop Entry" --key DefaultProfile "$F"
+for svc in $(gdbus call --session -d org.freedesktop.DBus -o /org/freedesktop/DBus -m org.freedesktop.DBus.ListNames | grep -o "org.kde.konsole-[0-9]*" | sort -u); do
+  for s in $(gdbus introspect --session -d "$svc" -o /Sessions 2>/dev/null | grep -o 'node [0-9]*' | awk '{print $2}'); do
+    gdbus call --session -d "$svc" -o "/Sessions/$s" -m org.kde.konsole.Session.setProfile "$P" >/dev/null 2>&1
+  done
+done

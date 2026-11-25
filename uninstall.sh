@@ -24,7 +24,8 @@ rm -rf "$LS"/{spotlight-tahoe,tahoe-cc,tahoe-menus,tahoe-osd,tahoe-bartint,tahoe
        "$LS"/applications/{local.spotlight.desktop,local.tahoecc.desktop,mac-trash.desktop,org.kde.konsole.desktop} \
        "$LS"/applications/local.dock-{1..9}.desktop \
        "$HOME/.config/fontconfig/conf.d/99-tahoe-rendering.conf" "$HOME/.config/plasma-workspace/env/wavetask.sh"
-rm -f "$BIN"/{spotlight-search,tahoe-cc,dock-number,konsole-hide-toolbars,systemsettings-stable,tahoe-health-check,tahoe-kirigami-tabs}
+rm -f "$BIN"/{spotlight-search,tahoe-cc,dock-number,konsole-hide-toolbars,systemsettings-stable,tahoe-health-check,tahoe-kirigami-tabs,tahoe-appearance,tahoe-corners,tahoe-konsole}
+rm -rf "$LS"/plasma/desktoptheme/MacTahoe-Light-Clear "$LS"/aurorae/themes/MacTahoe-Light-Windows "$LS"/konsole/SequoiaGlassLight.{profile,colorscheme}
 rm -f "$LS"/icons/hicolor/scalable/places/tahoe-sb-*.svg
 
 if [ -n "$BK" ] && [ -f "$BK" ]; then

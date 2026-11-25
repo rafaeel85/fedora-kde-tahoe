@@ -22,11 +22,25 @@ Item {
     readonly property int gridRows: 4
 
     // ---------- palette (dark liquid glass)
-    readonly property color glassFill: "#4a3a3a42"      // clear liquid glass (bar)
-    readonly property color panelFill: "#60323238"      // a touch denser for legible results
-    readonly property color glassEdge: "#4dffffff"
-    readonly property color textMain: "#f5f5f7"
-    readonly property color textDim: "#98989f"
+    // adaptive glass (2026-11-26): darker glass on light wallpapers (glassTone.dim 0..1 from app.py)
+    readonly property real dim: typeof glassTone !== "undefined" ? glassTone.dim : 0
+    // appearance (2026-11-26): light = system light mode (black text, light glass); from app.py glassTone
+    readonly property bool light: typeof glassTone !== "undefined" && glassTone.light
+    function fg(a) { return light ? Qt.rgba(0, 0, 0, a) : Qt.rgba(1, 1, 1, a) }       // overlay / dim text
+    readonly property color fgHex: light ? "#1d1d1f" : "#ffffff"                     // glyph tint
+    // tone(darkColour, darkSolidAlpha, lightColour, lightSolidAlpha): glass fill for the current appearance,
+    // pushed towards a solid dark (dark mode) / white (light mode) glass by dim
+    function tone(c, a2, lc, la2) {
+        c = Qt.color(light && lc !== undefined ? lc : c)
+        const t = light ? [0.97, 0.97, 0.98] : [0.10, 0.10, 0.11]
+        const A = light && la2 !== undefined ? la2 : a2
+        return Qt.rgba(c.r + (t[0] - c.r) * dim, c.g + (t[1] - c.g) * dim, c.b + (t[2] - c.b) * dim, c.a + (A - c.a) * dim)
+    }
+    readonly property color glassFill: tone("#4a3a3a42", 0.62, "#8cf4f4f6", 0.86)      // clear liquid glass (bar)
+    readonly property color panelFill: tone("#60323238", 0.70, "#a6f4f4f6", 0.90)      // a touch denser for legible results
+    readonly property color glassEdge: root.fg(0.302)
+    readonly property color textMain: light ? "#1d1d1f" : "#f5f5f7"
+    readonly property color textDim: light ? "#6e6e73" : "#98989f"
     readonly property color selBlue: "#e01a6ae8"
     readonly property string fontName: "Inter"
 
@@ -240,10 +254,10 @@ Item {
             anchors.fill: parent
             radius: g.radius
             gradient: Gradient {
-                GradientStop { position: 0.0; color: "#30ffffff" }
-                GradientStop { position: 0.3; color: "#0dffffff" }
-                GradientStop { position: 0.75; color: "#03ffffff" }
-                GradientStop { position: 1.0; color: "#00ffffff" }
+                GradientStop { position: 0.0; color: root.fg(0.188) }
+                GradientStop { position: 0.3; color: root.fg(0.051) }
+                GradientStop { position: 0.75; color: root.fg(0.012) }
+                GradientStop { position: 1.0; color: root.fg(0.000) }
             }
         }
         Rectangle {
@@ -262,7 +276,7 @@ Item {
             radius: g.radius - 1
             color: "transparent"
             border.width: 1
-            border.color: "#0dffffff"
+            border.color: root.fg(0.051)
         }
     }
 
@@ -276,7 +290,7 @@ Item {
         Rectangle {
             anchors.fill: parent; anchors.margins: 3
             radius: 16
-            color: ac.current ? "#30ffffff" : (acm.containsMouse ? "#14ffffff" : "transparent")
+            color: ac.current ? root.fg(0.188) : (acm.containsMouse ? root.fg(0.078) : "transparent")
         }
         Kirigami.Icon {
             anchors.horizontalCenter: parent.horizontalCenter
@@ -348,12 +362,12 @@ Item {
                         required property string modelData
                         readonly property bool on: root.catFilter === modelData
                         height: 26; width: ct.implicitWidth + 22; radius: 13
-                        color: on ? "#4dffffff" : (chm.containsMouse ? "#24ffffff" : "#14ffffff")
-                        border.width: 1; border.color: on ? "#59ffffff" : "#1fffffff"
+                        color: on ? root.fg(0.302) : (chm.containsMouse ? root.fg(0.141) : root.fg(0.078))
+                        border.width: 1; border.color: on ? root.fg(0.349) : root.fg(0.122)
                         Text {
                             id: ct; anchors.centerIn: parent
                             text: chip.modelData
-                            color: chip.on ? root.textMain : "#c8c8ce"
+                            color: chip.on ? root.textMain : (root.light ? "#3a3a3c" : "#c8c8ce")
                             font.family: root.fontName; font.pixelSize: 12; font.weight: Font.Medium
                         }
                         MouseArea {
@@ -380,7 +394,7 @@ Item {
                             }
                         }
                     }
-                    Rectangle { x: 20; y: 96 + 6; width: parent.width - 40; height: 1; color: "#26ffffff" }
+                    Rectangle { x: 20; y: 96 + 6; width: parent.width - 40; height: 1; color: root.fg(0.149) }
                 }
 
                 GridView {
@@ -449,7 +463,7 @@ Item {
                 selectionColor: "#5a0b5fd6"
                 selectedTextColor: root.textMain
                 placeholderText: root.placeholders[root.mode]
-                placeholderTextColor: "#8a8a91"
+                placeholderTextColor: root.light ? Qt.rgba(0, 0, 0, 0.45) : (root.dim > 0 ? Qt.rgba(1, 1, 1, 0.55) : "#8a8a91")
                 font.family: root.fontName
                 font.pixelSize: 22
                 font.weight: Font.Normal
@@ -512,11 +526,11 @@ Item {
                 anchors.right: parent.right; anchors.rightMargin: 18
                 anchors.verticalCenter: parent.verticalCenter
                 width: 26; height: 26; radius: 13
-                color: dma.containsMouse ? "#24ffffff" : "transparent"
-                border.width: 1.5; border.color: "#c8c8ce"
+                color: dma.containsMouse ? root.fg(0.141) : "transparent"
+                border.width: 1.5; border.color: root.light ? "#8e8e93" : "#c8c8ce"
                 Row {
                     anchors.centerIn: parent; spacing: 3
-                    Repeater { model: 3; Rectangle { width: 3; height: 3; radius: 1.5; color: "#e6e6ea" } }
+                    Repeater { model: 3; Rectangle { width: 3; height: 3; radius: 1.5; color: root.light ? "#3a3a3c" : "#e6e6ea" } }
                 }
                 MouseArea { id: dma; anchors.fill: parent; hoverEnabled: true; onClicked: { bridge.launchApp("/usr/share/applications/org.kde.discover.desktop"); bridge.dismiss() } }
             }
@@ -555,7 +569,7 @@ Item {
 
                     Rectangle {
                         anchors.fill: parent; radius: width / 2
-                        color: "#ffffff"
+                        color: root.fgHex
                         opacity: bma.pressed ? 0.16 : bma.containsMouse ? 0.09 : 0
                         Behavior on opacity { NumberAnimation { duration: 120 } }
                     }
@@ -578,7 +592,7 @@ Item {
                         anchors.horizontalCenter: parent.horizontalCenter
                         y: parent.height + 9
                         width: tip.implicitWidth + 18; height: 24; radius: 7
-                        color: "#ee2a2a2e"; border.color: "#30ffffff"
+                        color: "#ee2a2a2e"; border.color: root.fg(0.188)
                         Text {
                             id: tip
                             anchors.centerIn: parent
@@ -642,7 +656,7 @@ Item {
                         width: parent.width
                         height: row.isTop ? 54 : 40
                         radius: 11
-                        color: row.sel ? root.selBlue : (rma.containsMouse ? "#14ffffff" : "transparent")
+                        color: row.sel ? root.selBlue : (rma.containsMouse ? root.fg(0.078) : "transparent")
 
                         Kirigami.Icon {
                             id: ico

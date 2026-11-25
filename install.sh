@@ -131,17 +131,24 @@ fetch vinceliuice/MacTahoe-gtk-theme  "$MACTAHOE_GTK"   MacTahoe-gtk-theme
 fetch vickoc911/org.vicko.wavetask    "$WAVETASK"       wavetask
 
 say "Installing MacTahoe themes"
-(cd "$WORK/MacTahoe-kde" && ./install.sh -c dark)
+(cd "$WORK/MacTahoe-kde" && ./install.sh)   # light + dark (tahoe-appearance switches between them)
 (cd "$WORK/MacTahoe-icon-theme" && ./install.sh -d "$LS/icons" -t default)
 (cd "$WORK/MacTahoe-icon-theme/cursors" && ./install.sh)
 mkdir -p "$HOME/.themes"
 tar -xJf "$WORK/MacTahoe-gtk-theme/release/MacTahoe-Dark.tar.xz" -C "$HOME/.themes"
+tar -xJf "$WORK/MacTahoe-gtk-theme/release/MacTahoe-Light.tar.xz" -C "$HOME/.themes" 2>/dev/null || true
 
 say "Applying Tahoe overlays on the themes"
 # Plasma style "MacTahoe-Dark-Clear": transparent menu bar + SF-style tray icons
 rm -rf "$LS/plasma/desktoptheme/MacTahoe-Dark-Clear"
 cp -r "$LS/plasma/desktoptheme/MacTahoe-Dark" "$LS/plasma/desktoptheme/MacTahoe-Dark-Clear"
 cp -r "$O/plasma-MacTahoe-Dark-Clear/." "$LS/plasma/desktoptheme/MacTahoe-Dark-Clear/"
+# ... and its light twin "MacTahoe-Light-Clear" (used by tahoe-appearance light)
+if [ -d "$LS/plasma/desktoptheme/MacTahoe-Light" ]; then
+  rm -rf "$LS/plasma/desktoptheme/MacTahoe-Light-Clear"
+  cp -r "$LS/plasma/desktoptheme/MacTahoe-Light" "$LS/plasma/desktoptheme/MacTahoe-Light-Clear"
+  cp -r "$O/plasma-MacTahoe-Light-Clear/." "$LS/plasma/desktoptheme/MacTahoe-Light-Clear/"
+fi
 # Icons: SF-style Wi-Fi, volume, notification, tab icons
 # (upstream links some size folders, e.g. preferences -> ../MacTahoe/…, so write through the link)
 (cd "$O/icons-MacTahoe-dark" && find . -type f) | while read -r f; do
@@ -153,8 +160,8 @@ gtk-update-icon-cache -f -t "$LS/icons/MacTahoe-dark" >/dev/null 2>&1 || true
 mkdir -p "$HOME/.config/Kvantum/MacTahoe"
 cp "$O/kvantum-MacTahoe/"* "$HOME/.config/Kvantum/MacTahoe/"
 # Window decoration (Windows-style buttons on the right, MacTahoe look)
-mkdir -p "$LS/aurorae/themes"; rm -rf "$LS/aurorae/themes/MacTahoe-Dark-Windows"
-cp -r "$C/aurorae/MacTahoe-Dark-Windows" "$LS/aurorae/themes/"
+mkdir -p "$LS/aurorae/themes"; rm -rf "$LS/aurorae/themes/MacTahoe-Dark-Windows" "$LS/aurorae/themes/MacTahoe-Light-Windows"
+cp -r "$C/aurorae/MacTahoe-Dark-Windows" "$C/aurorae/MacTahoe-Light-Windows" "$LS/aurorae/themes/"
 
 say "Building and installing the WaveTask dock (into ~/.local)"
 cmake -S "$WORK/wavetask" -B "$WORK/wavetask-build" -DCMAKE_BUILD_TYPE=Release \

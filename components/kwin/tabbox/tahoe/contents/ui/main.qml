@@ -6,6 +6,7 @@ import org.kde.kwin as KWin
 
 KWin.TabBoxSwitcher {
     id: tabBox
+    readonly property bool light: main.Kirigami.Theme.backgroundColor.hslLightness > 0.5   // light colour scheme (tahoe-appearance)
     currentIndex: (instantiator.object && instantiator.object.currentIndex !== undefined) ? instantiator.object.currentIndex : currentIndex
 
     Instantiator {
@@ -47,9 +48,9 @@ KWin.TabBoxSwitcher {
                             x: 0; y: 0
                             width: main.cell; height: main.cell
                             radius: 18
-                            color: Qt.rgba(1, 1, 1, 0.16)
+                            color: (tabBox.light ? Qt.rgba(0, 0, 0, 0.16) : Qt.rgba(1, 1, 1, 0.16))
                             border.width: 1
-                            border.color: Qt.rgba(1, 1, 1, 0.10)
+                            border.color: (tabBox.light ? Qt.rgba(0, 0, 0, 0.10) : Qt.rgba(1, 1, 1, 0.10))
                         }
                     }
 
@@ -75,12 +76,12 @@ KWin.TabBoxSwitcher {
                             horizontalAlignment: Text.AlignHCenter
                             elide: Text.ElideRight
                             text: {
-                                // app name ("Konsole" from "~ : bash — Konsole")
+                                // app name ("Konsole" from "~ : claude — Konsole")
                                 const c = del.caption || "";
                                 const parts = c.split(/ [—–-] /);
                                 return parts.length > 1 ? parts[parts.length - 1] : c;
                             }
-                            color: "white"
+                            color: tabBox.light ? "#1d1d1f" : "white"
                             font.family: "Inter"
                             font.pixelSize: 13
                             font.weight: Font.Medium

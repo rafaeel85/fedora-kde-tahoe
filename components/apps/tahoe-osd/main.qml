@@ -5,6 +5,7 @@ import org.kde.kirigami as Kirigami
 // macOS Tahoe HUD: a Control-Center-like glass module in the top-right corner
 Item {
     id: root
+    readonly property bool light: typeof glassTone !== "undefined" && glassTone.light   // system light mode
 
     readonly property int m: 22            // shadow margin (KWin script accounts for it)
     readonly property int cardW: 300
@@ -122,9 +123,9 @@ Item {
         height: root.mode === "progress" ? 70 : 52
         radius: 22
         opacity: 0
-        color: Qt.rgba(0.16, 0.16, 0.19, 0.42)
+        color: root.light ? Qt.rgba(0.97, 0.97, 0.98, 0.80) : Qt.rgba(0.16, 0.16, 0.19, 0.42)
         border.width: 1
-        border.color: Qt.rgba(1, 1, 1, 0.18)
+        border.color: root.light ? Qt.rgba(1, 1, 1, 0.70) : Qt.rgba(1, 1, 1, 0.18)
         onOpacityChanged: if (opacity === 0) bridge.setShown(false)
         Behavior on opacity { NumberAnimation { duration: card.opacity > 0.5 ? 350 : 120; easing.type: Easing.OutCubic } }
         onHeightChanged: Qt.callLater(root.pushShapes)
@@ -151,14 +152,14 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 source: root.iconName
                 isMask: true
-                color: "white"
+                color: root.light ? "#1d1d1f" : "white"
             }
             Text {
                 anchors.verticalCenter: parent.verticalCenter
                 width: root.cardW - 60
                 elide: Text.ElideRight
                 text: root.title
-                color: "white"
+                color: root.light ? "#1d1d1f" : "white"
                 font.family: root.fontName
                 font.pixelSize: 13
                 font.weight: Font.DemiBold
@@ -176,7 +177,7 @@ Item {
                 anchors.left: parent.left
                 anchors.top: parent.top
                 text: root.title
-                color: "white"
+                color: root.light ? "#1d1d1f" : "white"
                 font.family: root.fontName
                 font.pixelSize: 13
                 font.weight: Font.DemiBold
@@ -189,7 +190,7 @@ Item {
                 horizontalAlignment: Text.AlignRight
                 elide: Text.ElideLeft
                 text: root.extra
-                color: Qt.rgba(1, 1, 1, 0.6)
+                color: root.light ? Qt.rgba(0, 0, 0, 0.55) : Qt.rgba(1, 1, 1, 0.6)
                 font.family: root.fontName
                 font.pixelSize: 11
             }
@@ -202,7 +203,7 @@ Item {
                 anchors.bottom: parent.bottom
                 height: 22
                 radius: 11
-                color: Qt.rgba(1, 1, 1, 0.18)
+                color: root.light ? Qt.rgba(0, 0, 0, 0.12) : Qt.rgba(1, 1, 1, 0.18)
                 clip: true
 
                 Rectangle {
@@ -210,7 +211,7 @@ Item {
                     height: parent.height
                     radius: parent.radius
                     width: Math.max(parent.height, parent.width * Math.min(1, root.shownValue / root.maxValue))
-                    color: "white"
+                    color: root.light ? "#3a3a3c" : "white"
                 }
                 // over-amplification tint (>100%)
                 Rectangle {
@@ -228,7 +229,7 @@ Item {
                     x: 4
                     width: 16; height: 16
                     sourceSize: Qt.size(16, 16)
-                    source: root.glyph ? root.glyphUrl(root.glyph, "#5a5a60") : ""
+                    source: root.glyph ? root.glyphUrl(root.glyph, root.light ? "#ffffff" : "#5a5a60") : ""
                     SequentialAnimation {
                         id: glyphPulse
                         NumberAnimation { target: glyphImg; property: "scale"; to: 1.18; duration: 90; easing.type: Easing.OutQuad }

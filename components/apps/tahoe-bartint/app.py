@@ -4,7 +4,9 @@ over a light wallpaper and white text over a dark one.
 Measures the wallpaper strip that lies under the top bar and publishes the result.
 D-Bus: local.TahoeBar /Bar  tint() -> "light" (white text) | "dark" (black text)
        signal tintChanged(s)
-Re-measures whenever plasma-org.kde.plasma.desktop-appletsrc changes."""
+Re-measures whenever plasma-org.kde.plasma.desktop-appletsrc changes.
+Also: glassLightness() (whole wallpaper, for glass dimming) and appearance() -> "light" | "dark"
+(system colour scheme, from kdeglobals [Colors:Window] BackgroundNormal), signal appearanceChanged(s)."""
 import sys, re, os
 from pathlib import Path
 from urllib.parse import unquote, urlparse
@@ -21,6 +23,20 @@ app.setQuitOnLastWindowClosed(False)
 bus = QDBusConnection.sessionBus()
 if bus.interface().isServiceRegistered('local.TahoeBar').value():
     sys.exit(0)
+
+KDEGLOBALS = Path.home() / '.config/kdeglobals'
+
+def appearance_now():
+    """'light' if the active colour scheme has a light window background, else 'dark'."""
+    try:
+        t = KDEGLOBALS.read_text(encoding='utf-8', errors='replace')
+        m = re.search(r'\[Colors:Window\][^\[]*?BackgroundNormal=(\d+),(\d+),(\d+)', t)
+        if m:
+            r, g, b = (int(x) / 255 for x in m.groups())
+            return 'light' if 0.299 * r + 0.587 * g + 0.114 * b > 0.5 else 'dark'
+    except OSError:
+        pass
+    return 'dark'
 
 def parse_cfg():
     groups, cur = {}, None
@@ -63,9 +79,11 @@ def lightness_of(img):
             tot += 0.299 * c.redF() + 0.587 * c.greenF() + 0.114 * c.blueF(); n += 1
     return tot / max(1, n)
 
-def measure():
+def measure(span=None):
+    """mean lightness of the wallpaper under screen rows 0..span (default: the menu bar)"""
     scr = app.primaryScreen()
     W, H = (scr.size().width(), scr.size().height()) if scr else (1920, 1200)
+    BAR = span or globals()['BAR']
     plug, s = wallpaper()
     if plug == 'org.kde.color':
         c = s.get('Color', '0,0,0').split(',')
@@ -107,13 +125,22 @@ def measure():
 @ClassInfo({'D-Bus Interface': 'local.TahoeBar'})
 class Bar(QObject):
     tintChanged = Signal(str)
+    glassLightnessChanged = Signal(float)   # whole-screen wallpaper lightness (for glass dimming)
+    appearanceChanged = Signal(str)          # "light" | "dark" system appearance
     def __init__(self):
-        super().__init__(); self._tint = 'light'
+        super().__init__(); self._tint = 'light'; self._g = -1.0; self._app = appearance_now()
     @Slot(result=str)
     def tint(self): return self._tint
     @Slot(result=float)
     def lightness(self): return self._l
+    @Slot(result=float)
+    def glassLightness(self): return self._g
+    @Slot(result=str)
+    def appearance(self): return self._app
     def update(self):
+        a = appearance_now()
+        if a != self._app:
+            self._app = a; print('appearance ->', a, flush=True); self.appearanceChanged.emit(a)
         try: l = measure()
         except Exception as e:
             print('measure failed:', e, file=sys.stderr); l = None
@@ -122,6 +149,14 @@ class Bar(QObject):
         print(f'wallpaper lightness={self._l:.3f} -> {t}', flush=True)
         if t != self._tint:
             self._tint = t; self.tintChanged.emit(t)
+        try:
+            scr = app.primaryScreen(); g = measure(scr.size().height() if scr else 1200)
+        except Exception as e:
+            print('glass measure failed:', e, file=sys.stderr); g = None
+        g = -1.0 if g is None else g
+        print(f'glass lightness={g:.3f}', flush=True)
+        if abs(g - self._g) > 0.005:
+            self._g = g; self.glassLightnessChanged.emit(g)
 
 bar = Bar(); bar._l = -1.0
 bus.registerObject('/Bar', bar, QDBusConnection.ExportAllSlots | QDBusConnection.ExportAllSignals)

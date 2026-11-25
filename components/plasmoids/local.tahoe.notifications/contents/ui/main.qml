@@ -13,6 +13,7 @@ import org.kde.taskmanager as TaskManager
 
 PlasmoidItem {
     id: root
+    readonly property bool light: Kirigami.Theme.backgroundColor.hslLightness > 0.5   // light Plasma style (tahoe-appearance)
 
     Plasmoid.icon: inhibited ? "notifications-disabled" : "notifications"
     Plasmoid.status: historyModel.activeNotificationsCount > 0 || popupModel.activeJobsCount > 0
@@ -322,7 +323,7 @@ PlasmoidItem {
                     width: ListView.view.width
                     height: hcard.implicitHeight
                     radius: 18
-                    color: Qt.rgba(1, 1, 1, 0.08)
+                    color: (root.light ? Qt.rgba(0, 0, 0, 0.08) : Qt.rgba(1, 1, 1, 0.08))
                     NotificationCard {
                         id: hcard
                         width: parent.width

@@ -27,14 +27,28 @@ Item {
     }
 
     // ------------------------------------------------------------ palette
-    readonly property color glassFill: "#4a3a3a42"
-    readonly property color cardFill: "#3a3a3a42"
+    // adaptive glass (2026-11-26): darker glass on light wallpapers (glassTone.dim 0..1 from app.py)
+    readonly property real dim: typeof glassTone !== "undefined" ? glassTone.dim : 0
+    // appearance (2026-11-26): light = system light mode (black text, light glass); from app.py glassTone
+    readonly property bool light: typeof glassTone !== "undefined" && glassTone.light
+    function fg(a) { return light ? Qt.rgba(0, 0, 0, a) : Qt.rgba(1, 1, 1, a) }       // overlay / dim text
+    readonly property color fgHex: light ? "#1d1d1f" : "#ffffff"                     // glyph tint
+    // tone(darkColour, darkSolidAlpha, lightColour, lightSolidAlpha): glass fill for the current appearance,
+    // pushed towards a solid dark (dark mode) / white (light mode) glass by dim
+    function tone(c, a2, lc, la2) {
+        c = Qt.color(light && lc !== undefined ? lc : c)
+        const t = light ? [0.97, 0.97, 0.98] : [0.10, 0.10, 0.11]
+        const A = light && la2 !== undefined ? la2 : a2
+        return Qt.rgba(c.r + (t[0] - c.r) * dim, c.g + (t[1] - c.g) * dim, c.b + (t[2] - c.b) * dim, c.a + (A - c.a) * dim)
+    }
+    readonly property color glassFill: tone("#4a3a3a42", 0.62, "#8cf4f4f6", 0.86)
+    readonly property color cardFill: tone("#3a3a3a42", 0.55, "#73f4f4f6", 0.80)
     readonly property color rimTop: "#80ffffff"
     readonly property color rimBottom: "#26ffffff"
     readonly property color accent: "#0a84ff"
-    readonly property color textMain: "#ffffff"
-    readonly property color textDim: "#a8ffffff"
-    readonly property color hoverFill: "#2effffff"
+    readonly property color textMain: light ? "#1d1d1f" : "#ffffff"
+    readonly property color textDim: root.fg(0.659)
+    readonly property color hoverFill: root.fg(0.180)
     readonly property string fontName: "Inter"
     readonly property var loc: Qt.locale()
 
@@ -79,7 +93,7 @@ Item {
         return "cloud"
     }
     function weatherIc(icon, mono) {
-        const S = mono ? "#ffffff" : "#ffd60a", W = "#ffffff", R = mono ? "#ffffff" : "#5ac8fa", M = mono ? "#ffffff" : "#e8e6f5"
+        const F = root.fgHex.toString(), S = mono ? F : "#ffd60a", W = mono ? F : (root.light ? "#a1a1a6" : "#ffffff"), R = mono ? F : "#5ac8fa", M = mono ? F : (root.light ? "#8e8e93" : "#e8e6f5")
         const cloud = '<path fill="' + W + '" d="M6.8 19.5h10.6a4.3 4.3 0 0 0 .5-8.57A6.2 6.2 0 0 0 6.1 9.9 4.8 4.8 0 0 0 6.8 19.5z"/>'
         const sun = (cx, cy, r, s) => '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + S + '"/><g stroke="' + S + '" stroke-width="' + s + '" stroke-linecap="round" transform="translate(' + cx + ' ' + cy + ')">'
             + '<path d="M0 -' + (r + 2.3) + 'v-1.9M0 ' + (r + 2.3) + 'v1.9M-' + (r + 2.3) + ' 0h-1.9M' + (r + 2.3) + ' 0h1.9"/>'
@@ -236,8 +250,8 @@ Item {
         Rectangle {
             anchors.fill: parent; radius: parent.radius
             gradient: Gradient {
-                GradientStop { position: 0.0; color: "#14ffffff" }
-                GradientStop { position: 0.35; color: "#00ffffff" }
+                GradientStop { position: 0.0; color: root.fg(0.078) }
+                GradientStop { position: 0.35; color: root.fg(0.000) }
             }
         }
         Rectangle {
@@ -263,7 +277,7 @@ Item {
     }
     component Sep: Item {
         width: parent ? parent.width : 0; height: 11
-        Rectangle { x: 10; y: 5; width: parent.width - 20; height: 1; color: "#24ffffff" }
+        Rectangle { x: 10; y: 5; width: parent.width - 20; height: 1; color: root.fg(0.141) }
     }
     // hover row with rounded highlight (Tahoe menus highlight with a soft pill)
     component Row2: Item {
@@ -286,7 +300,7 @@ Item {
         property bool on: false
         signal toggled()
         width: 34; height: 20; radius: 10
-        color: on ? root.accent : "#45ffffff"
+        color: on ? root.accent : root.fg(0.271)
         Behavior on color { ColorAnimation { duration: 150 } }
         Rectangle {
             width: 16; height: 16; radius: 8; y: 2
@@ -298,7 +312,7 @@ Item {
     }
     component Glyph: Image {
         property string name
-        property color tint: "#ffffff"
+        property color tint: root.fgHex
         width: 14; height: 14
         sourceSize: Qt.size(48, 48)
         opacity: tint.a
@@ -456,7 +470,7 @@ Item {
                     Section { anchors.verticalCenter: parent.verticalCenter; leftPadding: 0; topPadding: 0; bottomPadding: 0; text: "Diğer Ağlar" }
                     Glyph {
                         anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter
-                        width: 10; height: 10; name: "chevron"; tint: "#c8ffffff"
+                        width: 10; height: 10; name: "chevron"; tint: root.fg(0.784)
                         rotation: root.othersOpen ? 90 : 0
                         Behavior on rotation { NumberAnimation { duration: 150 } }
                     }
@@ -516,10 +530,10 @@ Item {
                 Rectangle {
                     x: -4; anchors.verticalCenter: parent.verticalCenter
                     width: 26; height: 26; radius: 13
-                    color: nr.active ? root.accent : "#33ffffff"
+                    color: nr.active ? root.accent : root.fg(0.200)
                     Image {
                         anchors.centerIn: parent; width: 15; height: 15; sourceSize: Qt.size(48, 48)
-                        source: root.wifiIc(root.sigLevel(nr.md.Signal), "#ffffff")
+                        source: root.wifiIc(root.sigLevel(nr.md.Signal), root.fgHex)
                     }
                 }
                 Label {
@@ -536,7 +550,7 @@ Item {
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
                     width: 11; height: 11; visible: nr.secured
-                    name: "lock"; tint: "#b4ffffff"
+                    name: "lock"; tint: root.fg(0.706)
                 }
             }
             Row {
@@ -616,7 +630,7 @@ Item {
                 // segmented control (Tahoe "Energy Mode")
                 Rectangle {
                     x: 8; width: parent.width - 16; height: 30; radius: 15
-                    color: "#26ffffff"
+                    color: root.fg(0.149)
                     visible: root.profiles.length > 0
                     Row {
                         anchors.fill: parent; anchors.margins: 2
@@ -624,7 +638,7 @@ Item {
                             model: [["power-saver", "Düşük Güç"], ["balanced", "Otomatik"], ["performance", "Yüksek Güç"]]
                             delegate: Rectangle {
                                 width: (parent.width) / 3; height: parent.height; radius: height / 2
-                                color: root.profile === modelData[0] ? "#ffffff" : (sma.containsMouse ? "#1fffffff" : "transparent")
+                                color: root.profile === modelData[0] ? "#ffffff" : (sma.containsMouse ? root.fg(0.122) : "transparent")
                                 Behavior on color { ColorAnimation { duration: 120 } }
                                 Text {
                                     anchors.centerIn: parent
@@ -704,7 +718,7 @@ Item {
             model: wl.fc
             delegate: Item {
                 width: wl.width; height: 30
-                Rectangle { visible: index > 0; width: parent.width; height: 1; color: "#1fffffff" }
+                Rectangle { visible: index > 0; width: parent.width; height: 1; color: root.fg(0.122) }
                 Text {
                     x: 0; width: 52; anchors.verticalCenter: parent.verticalCenter
                     text: index === 0 ? "Bugün" : modelData.day
@@ -730,7 +744,7 @@ Item {
                     id: track
                     x: 148; width: parent.width - 148 - 40; height: 5; radius: 2.5
                     anchors.verticalCenter: parent.verticalCenter
-                    color: "#26ffffff"
+                    color: root.fg(0.149)
                     readonly property real span: Math.max(1, wl.maxT - wl.minT)
                     Rectangle {
                         x: track.width * (modelData.lo - wl.minT) / track.span
@@ -801,10 +815,10 @@ Item {
                                 ["drop", "Yağış", root.today && root.today.rain !== "N/A" ? "%" + root.today.rain : "–"]]
                         delegate: Rectangle {
                             width: (parent.width - 16) / 3; height: 52; radius: 12
-                            color: "#1fffffff"
+                            color: root.fg(0.122)
                             Row {
                                 x: 9; y: 8; spacing: 4
-                                Image { width: 11; height: 11; sourceSize: Qt.size(48, 48); source: root.ic(modelData[0], "#ffffff"); opacity: 0.66; anchors.verticalCenter: parent.verticalCenter }
+                                Image { width: 11; height: 11; sourceSize: Qt.size(48, 48); source: root.ic(modelData[0], root.fgHex); opacity: 0.66; anchors.verticalCenter: parent.verticalCenter }
                                 Text { text: modelData[1].toLocaleUpperCase(); color: root.textDim; font.family: root.fontName; font.pixelSize: 10; font.weight: Font.DemiBold }
                             }
                             Text { x: 9; y: 25; text: modelData[2]; color: root.textMain; font.family: root.fontName; font.pixelSize: 15; font.weight: Font.DemiBold }
@@ -816,7 +830,7 @@ Item {
                     text: "7 GÜNLÜK TAHMİN"
                     color: root.textDim; font.family: root.fontName; font.pixelSize: 11; font.weight: Font.DemiBold
                 }
-                Rectangle { width: parent.width; height: 1; color: "#26ffffff" }
+                Rectangle { width: parent.width; height: 1; color: root.fg(0.149) }
                 WeatherList { width: parent.width; days: 7 }
                 Item { width: 1; height: 4 }
                 Row2 {
