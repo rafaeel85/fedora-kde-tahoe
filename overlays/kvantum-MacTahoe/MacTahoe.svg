@@ -4270,7 +4270,7 @@
      x="0"
      y="0" />
   <g
-     id="tab-normal-topleft"
+     id="tab-normal-topleft-old"
      transform="translate(0,300)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke-width:1.06666;stroke-linecap:round;stroke-linejoin:round"
@@ -4287,7 +4287,7 @@
        d="m 28,-57 c -2.77,0 -5,2.23 -5,5 h 5 z" />
   </g>
   <g
-     id="tab-normal-top"
+     id="tab-normal-top-old"
      transform="translate(0,300)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke-width:1.50849;stroke-linecap:round;stroke-linejoin:round"
@@ -4309,7 +4309,7 @@
        ry="0" />
   </g>
   <g
-     id="tab-normal-topright"
+     id="tab-normal-topright-old"
      transform="translate(0,300)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke-width:1.06666;stroke-linecap:round;stroke-linejoin:round"
@@ -4330,7 +4330,7 @@
        height="100%" />
   </g>
   <g
-     id="tab-normal-bottomright"
+     id="tab-normal-bottomright-old"
      transform="translate(0,300)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke-width:1.06666;stroke-linecap:round;stroke-linejoin:round"
@@ -4351,7 +4351,7 @@
        height="100%" />
   </g>
   <g
-     id="tab-normal-bottomleft"
+     id="tab-normal-bottomleft-old"
      transform="translate(0,300)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke-width:1.06666;stroke-linecap:round;stroke-linejoin:round"
@@ -4372,7 +4372,7 @@
        height="100%" />
   </g>
   <g
-     id="tab-normal-bottom"
+     id="tab-normal-bottom-old"
      transform="translate(0,300)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke-width:1.50849;stroke-linecap:round;stroke-linejoin:round"
@@ -4393,7 +4393,7 @@
        height="100%" />
   </g>
   <g
-     id="tab-normal-left"
+     id="tab-normal-left-old"
      transform="translate(0,300)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke-width:1.06666;stroke-linecap:round;stroke-linejoin:round"
@@ -4414,7 +4414,7 @@
        height="100%" />
   </g>
   <g
-     id="tab-normal-right"
+     id="tab-normal-right-old"
      transform="translate(0,300)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke-width:1.06666;stroke-linecap:round;stroke-linejoin:round"
@@ -4435,7 +4435,7 @@
        height="100%" />
   </g>
   <g
-     id="tab-normal"
+     id="tab-normal-old"
      transform="translate(0,300)">
     <use
        x="0"
@@ -4447,7 +4447,7 @@
        height="100%" />
   </g>
   <g
-     id="tab-focused-topleft"
+     id="tab-focused-topleft-old"
      transform="translate(39,300)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke-width:1.06666;stroke-linecap:round;stroke-linejoin:round"
@@ -4464,7 +4464,7 @@
        d="m 28,-57 c -2.77,0 -5,2.23 -5,5 h 5 z" />
   </g>
   <g
-     id="tab-focused-top"
+     id="tab-focused-top-old"
      transform="translate(39,300)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke-width:1.50849;stroke-linecap:round;stroke-linejoin:round"
@@ -4486,7 +4486,7 @@
        ry="0" />
   </g>
   <g
-     id="tab-focused-topright"
+     id="tab-focused-topright-old"
      transform="translate(39,300)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke-width:1.06666;stroke-linecap:round;stroke-linejoin:round"
@@ -4507,7 +4507,7 @@
        height="100%" />
   </g>
   <g
-     id="tab-focused-bottomright"
+     id="tab-focused-bottomright-old"
      transform="translate(39,300)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke-width:1.06666;stroke-linecap:round;stroke-linejoin:round"
@@ -4528,7 +4528,7 @@
        height="100%" />
   </g>
   <g
-     id="tab-focused-bottomleft"
+     id="tab-focused-bottomleft-old"
      transform="translate(39,300)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke-width:1.06666;stroke-linecap:round;stroke-linejoin:round"
@@ -4549,7 +4549,7 @@
        height="100%" />
   </g>
   <g
-     id="tab-focused-bottom"
+     id="tab-focused-bottom-old"
      transform="translate(39,300)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke-width:1.50849;stroke-linecap:round;stroke-linejoin:round"
@@ -4570,7 +4570,7 @@
        height="100%" />
   </g>
   <g
-     id="tab-focused-left"
+     id="tab-focused-left-old"
      transform="translate(39,300)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke-width:1.06666;stroke-linecap:round;stroke-linejoin:round"
@@ -4591,7 +4591,7 @@
        height="100%" />
   </g>
   <g
-     id="tab-focused-right"
+     id="tab-focused-right-old"
      transform="translate(39,300)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke-width:1.06666;stroke-linecap:round;stroke-linejoin:round"
@@ -4612,7 +4612,7 @@
        height="100%" />
   </g>
   <g
-     id="tab-focused"
+     id="tab-focused-old"
      transform="translate(39,300)">
     <use
        x="0"
@@ -4624,7 +4624,7 @@
        height="100%" />
   </g>
   <g
-     id="tab-pressed-topleft"
+     id="tab-pressed-topleft-old"
      transform="translate(80,300)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke-width:1.06666;stroke-linecap:round;stroke-linejoin:round"
@@ -4641,7 +4641,7 @@
        d="m 28,-57 c -2.77,0 -5,2.23 -5,5 h 5 z" />
   </g>
   <g
-     id="tab-pressed-top"
+     id="tab-pressed-top-old"
      transform="translate(80,300)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke-width:1.50849;stroke-linecap:round;stroke-linejoin:round"
@@ -4663,7 +4663,7 @@
        ry="0" />
   </g>
   <g
-     id="tab-pressed-topright"
+     id="tab-pressed-topright-old"
      transform="translate(80,300)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke-width:1.06666;stroke-linecap:round;stroke-linejoin:round"
@@ -4684,7 +4684,7 @@
        height="100%" />
   </g>
   <g
-     id="tab-pressed-bottomright"
+     id="tab-pressed-bottomright-old"
      transform="translate(80,300)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke-width:1.06666;stroke-linecap:round;stroke-linejoin:round"
@@ -4705,7 +4705,7 @@
        height="100%" />
   </g>
   <g
-     id="tab-pressed-bottomleft"
+     id="tab-pressed-bottomleft-old"
      transform="translate(80,300)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke-width:1.06666;stroke-linecap:round;stroke-linejoin:round"
@@ -4726,7 +4726,7 @@
        height="100%" />
   </g>
   <g
-     id="tab-pressed-bottom"
+     id="tab-pressed-bottom-old"
      transform="translate(80,300)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke-width:1.50849;stroke-linecap:round;stroke-linejoin:round"
@@ -4747,7 +4747,7 @@
        height="100%" />
   </g>
   <g
-     id="tab-pressed-left"
+     id="tab-pressed-left-old"
      transform="translate(80,300)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke-width:1.06666;stroke-linecap:round;stroke-linejoin:round"
@@ -4768,7 +4768,7 @@
        height="100%" />
   </g>
   <g
-     id="tab-pressed-right"
+     id="tab-pressed-right-old"
      transform="translate(80,300)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke-width:1.06666;stroke-linecap:round;stroke-linejoin:round"
@@ -4789,7 +4789,7 @@
        height="100%" />
   </g>
   <g
-     id="tab-pressed"
+     id="tab-pressed-old"
      transform="translate(80,300)">
     <use
        x="0"
@@ -4801,7 +4801,7 @@
        height="100%" />
   </g>
   <g
-     id="tab-toggled-topleft"
+     id="tab-toggled-topleft-old"
      transform="translate(120,300)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke-width:1.06666;stroke-linecap:round;stroke-linejoin:round"
@@ -4818,7 +4818,7 @@
        d="m 28,-57 c -2.77,0 -5,2.23 -5,5 h 5 z" />
   </g>
   <g
-     id="tab-toggled-top"
+     id="tab-toggled-top-old"
      transform="translate(120,300)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke-width:1.50849;stroke-linecap:round;stroke-linejoin:round"
@@ -4840,7 +4840,7 @@
        ry="0" />
   </g>
   <g
-     id="tab-toggled-topright"
+     id="tab-toggled-topright-old"
      transform="translate(120,300)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke-width:1.06666;stroke-linecap:round;stroke-linejoin:round"
@@ -4861,7 +4861,7 @@
        height="100%" />
   </g>
   <g
-     id="tab-toggled-bottomright"
+     id="tab-toggled-bottomright-old"
      transform="translate(120,300)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke-width:1.06666;stroke-linecap:round;stroke-linejoin:round"
@@ -4882,7 +4882,7 @@
        height="100%" />
   </g>
   <g
-     id="tab-toggled-bottomleft"
+     id="tab-toggled-bottomleft-old"
      transform="translate(120,300)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke-width:1.06666;stroke-linecap:round;stroke-linejoin:round"
@@ -4903,7 +4903,7 @@
        height="100%" />
   </g>
   <g
-     id="tab-toggled-bottom"
+     id="tab-toggled-bottom-old"
      transform="translate(120,300)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke-width:1.50849;stroke-linecap:round;stroke-linejoin:round"
@@ -4924,7 +4924,7 @@
        height="100%" />
   </g>
   <g
-     id="tab-toggled-left"
+     id="tab-toggled-left-old"
      transform="translate(120,300)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke-width:1.06666;stroke-linecap:round;stroke-linejoin:round"
@@ -4945,7 +4945,7 @@
        height="100%" />
   </g>
   <g
-     id="tab-toggled-right"
+     id="tab-toggled-right-old"
      transform="translate(120,300)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke-width:1.06666;stroke-linecap:round;stroke-linejoin:round"
@@ -4966,7 +4966,7 @@
        height="100%" />
   </g>
   <g
-     id="tab-toggled"
+     id="tab-toggled-old"
      transform="translate(120,300)">
     <use
        x="0"
@@ -7769,4 +7769,5 @@
 <g id="menu-shadow-top" transform="translate(4414,0) matrix(0,1,1,0,0,0)"><path d="M0,0h14v20h-14Z" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M0,0H1V20H0Z" style="fill:#000000;fill-opacity:0.03;stroke:none"/><path d="M1,0H2V20H1Z" style="fill:#000000;fill-opacity:0.05;stroke:none"/><path d="M2,0H3V20H2Z" style="fill:#000000;fill-opacity:0.08;stroke:none"/><path d="M3,0H4V20H3Z" style="fill:#000000;fill-opacity:0.16;stroke:none"/><path d="M4,0H14V20H4Z" style="fill:#f6f6f8;fill-opacity:0.82;stroke:none"/><path d="M4,0H5V20H4Z" style="fill:#ffffff;fill-opacity:0.70;stroke:none"/></g>
 <g id="menu-shadow-bottom" transform="translate(4414,48) matrix(0,-1,1,0,0,0)"><path d="M0,0h14v20h-14Z" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M0,0H1V20H0Z" style="fill:#000000;fill-opacity:0.03;stroke:none"/><path d="M1,0H2V20H1Z" style="fill:#000000;fill-opacity:0.05;stroke:none"/><path d="M2,0H3V20H2Z" style="fill:#000000;fill-opacity:0.08;stroke:none"/><path d="M3,0H4V20H3Z" style="fill:#000000;fill-opacity:0.16;stroke:none"/><path d="M4,0H14V20H4Z" style="fill:#f6f6f8;fill-opacity:0.82;stroke:none"/><path d="M4,0H5V20H4Z" style="fill:#ffffff;fill-opacity:0.70;stroke:none"/></g>
 </g>
+<g id="tahoe-tabs-light"><g id="tab-normal-topleft"><rect x="3000" y="3000" width="10" height="9" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3009,3003H3010V3009H3003V3009A6,6 0 0 1 3009,3003Z" style="fill:#000000;fill-opacity:0.039;stroke:none"/><path d="M3003,3009V3009A6,6 0 0 1 3009,3003H3010V3004H3009A5,5 0 0 0 3004,3009V3009Z" style="fill:#000000;fill-opacity:0.077;stroke:none"/></g><g id="tab-normal-topright"><rect x="3050" y="3000" width="10" height="9" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3050,3003H3051A6,6 0 0 1 3057,3009V3009H3050Z" style="fill:#000000;fill-opacity:0.039;stroke:none"/><path d="M3050,3003H3051A6,6 0 0 1 3057,3009V3009H3056V3009A5,5 0 0 0 3051,3004H3050Z" style="fill:#000000;fill-opacity:0.077;stroke:none"/></g><g id="tab-normal-bottomleft"><rect x="3000" y="3039" width="10" height="9" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3003,3039H3010V3045H3009A6,6 0 0 1 3003,3039Z" style="fill:#000000;fill-opacity:0.039;stroke:none"/><path d="M3003,3039V3039A6,6 0 0 0 3009,3045H3010V3044H3009A5,5 0 0 1 3004,3039V3039Z" style="fill:#000000;fill-opacity:0.022;stroke:none"/></g><g id="tab-normal-bottomright"><rect x="3050" y="3039" width="10" height="9" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3050,3039H3057V3039A6,6 0 0 1 3051,3045H3050Z" style="fill:#000000;fill-opacity:0.039;stroke:none"/><path d="M3057,3039V3039A6,6 0 0 1 3051,3045H3050V3044H3051A5,5 0 0 0 3056,3039V3039Z" style="fill:#000000;fill-opacity:0.022;stroke:none"/></g><g id="tab-normal-top"><rect x="3010" y="3000" width="40" height="9" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3010,3003H3050V3009H3010Z" style="fill:#000000;fill-opacity:0.039;stroke:none"/><path d="M3010,3003H3050V3004H3010Z" style="fill:#000000;fill-opacity:0.077;stroke:none"/></g><g id="tab-normal-bottom"><rect x="3010" y="3039" width="40" height="9" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3010,3039H3050V3045H3010Z" style="fill:#000000;fill-opacity:0.039;stroke:none"/><path d="M3010,3044H3050V3045H3010Z" style="fill:#000000;fill-opacity:0.022;stroke:none"/></g><g id="tab-normal-left"><rect x="3000" y="3009" width="10" height="30" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3003,3009H3010V3039H3003Z" style="fill:#000000;fill-opacity:0.039;stroke:none"/><path d="M3003,3009H3004V3039H3003Z" style="fill:#000000;fill-opacity:0.039;stroke:none"/></g><g id="tab-normal-right"><rect x="3050" y="3009" width="10" height="30" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3050,3009H3057V3039H3050Z" style="fill:#000000;fill-opacity:0.039;stroke:none"/><path d="M3056,3009H3057V3039H3056Z" style="fill:#000000;fill-opacity:0.039;stroke:none"/></g><g id="tab-normal"><rect x="3010" y="3009" width="40" height="30" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3010,3009H3050V3039H3010Z" style="fill:#000000;fill-opacity:0.039;stroke:none"/></g><g id="tab-focused-topleft"><rect x="3120" y="3000" width="10" height="9" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3129,3003H3130V3009H3123V3009A6,6 0 0 1 3129,3003Z" style="fill:#000000;fill-opacity:0.072;stroke:none"/><path d="M3123,3009V3009A6,6 0 0 1 3129,3003H3130V3004H3129A5,5 0 0 0 3124,3009V3009Z" style="fill:#000000;fill-opacity:0.121;stroke:none"/></g><g id="tab-focused-topright"><rect x="3170" y="3000" width="10" height="9" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3170,3003H3171A6,6 0 0 1 3177,3009V3009H3170Z" style="fill:#000000;fill-opacity:0.072;stroke:none"/><path d="M3170,3003H3171A6,6 0 0 1 3177,3009V3009H3176V3009A5,5 0 0 0 3171,3004H3170Z" style="fill:#000000;fill-opacity:0.121;stroke:none"/></g><g id="tab-focused-bottomleft"><rect x="3120" y="3039" width="10" height="9" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3123,3039H3130V3045H3129A6,6 0 0 1 3123,3039Z" style="fill:#000000;fill-opacity:0.072;stroke:none"/><path d="M3123,3039V3039A6,6 0 0 0 3129,3045H3130V3044H3129A5,5 0 0 1 3124,3039V3039Z" style="fill:#000000;fill-opacity:0.028;stroke:none"/></g><g id="tab-focused-bottomright"><rect x="3170" y="3039" width="10" height="9" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3170,3039H3177V3039A6,6 0 0 1 3171,3045H3170Z" style="fill:#000000;fill-opacity:0.072;stroke:none"/><path d="M3177,3039V3039A6,6 0 0 1 3171,3045H3170V3044H3171A5,5 0 0 0 3176,3039V3039Z" style="fill:#000000;fill-opacity:0.028;stroke:none"/></g><g id="tab-focused-top"><rect x="3130" y="3000" width="40" height="9" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3130,3003H3170V3009H3130Z" style="fill:#000000;fill-opacity:0.072;stroke:none"/><path d="M3130,3003H3170V3004H3130Z" style="fill:#000000;fill-opacity:0.121;stroke:none"/></g><g id="tab-focused-bottom"><rect x="3130" y="3039" width="40" height="9" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3130,3039H3170V3045H3130Z" style="fill:#000000;fill-opacity:0.072;stroke:none"/><path d="M3130,3044H3170V3045H3130Z" style="fill:#000000;fill-opacity:0.028;stroke:none"/></g><g id="tab-focused-left"><rect x="3120" y="3009" width="10" height="30" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3123,3009H3130V3039H3123Z" style="fill:#000000;fill-opacity:0.072;stroke:none"/><path d="M3123,3009H3124V3039H3123Z" style="fill:#000000;fill-opacity:0.055;stroke:none"/></g><g id="tab-focused-right"><rect x="3170" y="3009" width="10" height="30" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3170,3009H3177V3039H3170Z" style="fill:#000000;fill-opacity:0.072;stroke:none"/><path d="M3176,3009H3177V3039H3176Z" style="fill:#000000;fill-opacity:0.055;stroke:none"/></g><g id="tab-focused"><rect x="3130" y="3009" width="40" height="30" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3130,3009H3170V3039H3130Z" style="fill:#000000;fill-opacity:0.072;stroke:none"/></g><g id="tab-pressed-topleft"><rect x="3240" y="3000" width="10" height="9" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3249,3003H3250V3009H3243V3009A6,6 0 0 1 3249,3003Z" style="fill:#000000;fill-opacity:0.110;stroke:none"/><path d="M3243,3009V3009A6,6 0 0 1 3249,3003H3250V3004H3249A5,5 0 0 0 3244,3009V3009Z" style="fill:#000000;fill-opacity:0.154;stroke:none"/></g><g id="tab-pressed-topright"><rect x="3290" y="3000" width="10" height="9" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3290,3003H3291A6,6 0 0 1 3297,3009V3009H3290Z" style="fill:#000000;fill-opacity:0.110;stroke:none"/><path d="M3290,3003H3291A6,6 0 0 1 3297,3009V3009H3296V3009A5,5 0 0 0 3291,3004H3290Z" style="fill:#000000;fill-opacity:0.154;stroke:none"/></g><g id="tab-pressed-bottomleft"><rect x="3240" y="3039" width="10" height="9" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3243,3039H3250V3045H3249A6,6 0 0 1 3243,3039Z" style="fill:#000000;fill-opacity:0.110;stroke:none"/><path d="M3243,3039V3039A6,6 0 0 0 3249,3045H3250V3044H3249A5,5 0 0 1 3244,3039V3039Z" style="fill:#000000;fill-opacity:0.033;stroke:none"/></g><g id="tab-pressed-bottomright"><rect x="3290" y="3039" width="10" height="9" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3290,3039H3297V3039A6,6 0 0 1 3291,3045H3290Z" style="fill:#000000;fill-opacity:0.110;stroke:none"/><path d="M3297,3039V3039A6,6 0 0 1 3291,3045H3290V3044H3291A5,5 0 0 0 3296,3039V3039Z" style="fill:#000000;fill-opacity:0.033;stroke:none"/></g><g id="tab-pressed-top"><rect x="3250" y="3000" width="40" height="9" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3250,3003H3290V3009H3250Z" style="fill:#000000;fill-opacity:0.110;stroke:none"/><path d="M3250,3003H3290V3004H3250Z" style="fill:#000000;fill-opacity:0.154;stroke:none"/></g><g id="tab-pressed-bottom"><rect x="3250" y="3039" width="40" height="9" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3250,3039H3290V3045H3250Z" style="fill:#000000;fill-opacity:0.110;stroke:none"/><path d="M3250,3044H3290V3045H3250Z" style="fill:#000000;fill-opacity:0.033;stroke:none"/></g><g id="tab-pressed-left"><rect x="3240" y="3009" width="10" height="30" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3243,3009H3250V3039H3243Z" style="fill:#000000;fill-opacity:0.110;stroke:none"/><path d="M3243,3009H3244V3039H3243Z" style="fill:#000000;fill-opacity:0.066;stroke:none"/></g><g id="tab-pressed-right"><rect x="3290" y="3009" width="10" height="30" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3290,3009H3297V3039H3290Z" style="fill:#000000;fill-opacity:0.110;stroke:none"/><path d="M3296,3009H3297V3039H3296Z" style="fill:#000000;fill-opacity:0.066;stroke:none"/></g><g id="tab-pressed"><rect x="3250" y="3009" width="40" height="30" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3250,3009H3290V3039H3250Z" style="fill:#000000;fill-opacity:0.110;stroke:none"/></g><g id="tab-toggled-topleft"><rect x="3360" y="3000" width="10" height="9" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3369,3003H3370V3009H3363V3009A6,6 0 0 1 3369,3003Z" style="fill:#ffffff;fill-opacity:1;stroke:none"/><path d="M3363,3009V3009A6,6 0 0 1 3369,3003H3370V3004H3369A5,5 0 0 0 3364,3009V3009Z" style="fill:#000000;fill-opacity:0.140;stroke:none"/></g><g id="tab-toggled-topright"><rect x="3410" y="3000" width="10" height="9" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3410,3003H3411A6,6 0 0 1 3417,3009V3009H3410Z" style="fill:#ffffff;fill-opacity:1;stroke:none"/><path d="M3410,3003H3411A6,6 0 0 1 3417,3009V3009H3416V3009A5,5 0 0 0 3411,3004H3410Z" style="fill:#000000;fill-opacity:0.140;stroke:none"/></g><g id="tab-toggled-bottomleft"><rect x="3360" y="3039" width="10" height="9" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3363,3039H3370V3045H3369A6,6 0 0 1 3363,3039Z" style="fill:#ffffff;fill-opacity:1;stroke:none"/><path d="M3363,3039V3039A6,6 0 0 0 3369,3045H3370V3044H3369A5,5 0 0 1 3364,3039V3039Z" style="fill:#000000;fill-opacity:0.025;stroke:none"/></g><g id="tab-toggled-bottomright"><rect x="3410" y="3039" width="10" height="9" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3410,3039H3417V3039A6,6 0 0 1 3411,3045H3410Z" style="fill:#ffffff;fill-opacity:1;stroke:none"/><path d="M3417,3039V3039A6,6 0 0 1 3411,3045H3410V3044H3411A5,5 0 0 0 3416,3039V3039Z" style="fill:#000000;fill-opacity:0.025;stroke:none"/></g><g id="tab-toggled-top"><rect x="3370" y="3000" width="40" height="9" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3370,3003H3410V3009H3370Z" style="fill:#ffffff;fill-opacity:1;stroke:none"/><path d="M3370,3003H3410V3004H3370Z" style="fill:#000000;fill-opacity:0.140;stroke:none"/></g><g id="tab-toggled-bottom"><rect x="3370" y="3039" width="40" height="9" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3370,3039H3410V3045H3370Z" style="fill:#ffffff;fill-opacity:1;stroke:none"/><path d="M3370,3044H3410V3045H3370Z" style="fill:#000000;fill-opacity:0.025;stroke:none"/></g><g id="tab-toggled-left"><rect x="3360" y="3009" width="10" height="30" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3363,3009H3370V3039H3363Z" style="fill:#ffffff;fill-opacity:1;stroke:none"/><path d="M3363,3009H3364V3039H3363Z" style="fill:#000000;fill-opacity:0.056;stroke:none"/></g><g id="tab-toggled-right"><rect x="3410" y="3009" width="10" height="30" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3410,3009H3417V3039H3410Z" style="fill:#ffffff;fill-opacity:1;stroke:none"/><path d="M3416,3009H3417V3039H3416Z" style="fill:#000000;fill-opacity:0.056;stroke:none"/></g><g id="tab-toggled"><rect x="3370" y="3009" width="40" height="30" style="fill:#000000;fill-opacity:0;stroke:none"/><path d="M3370,3009H3410V3039H3370Z" style="fill:#ffffff;fill-opacity:1;stroke:none"/></g></g>
 </svg>
