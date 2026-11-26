@@ -1,0 +1,19 @@
+#!/bin/bash
+# tahoe-gtk-corners — append the square-CSD block to ~/.config/gtk-{3,4}.0/gtk.css (idempotent).
+# KDE's GTK config / theme switches rewrite gtk.css, so tahoe-gtk-corners.path re-runs this.
+D=$HOME/.local/share/tahoe-overrides/gtk-corners
+# only when the KDE Rounded Corners effect is installed + enabled; without it GTK keeps the theme's own round corners
+on=0
+compgen -G '/usr/lib*/qt6/plugins/kwin/effects/plugins/kwin4_effect_shapecorners.so' >/dev/null || compgen -G '/usr/lib/*/qt6/plugins/kwin/effects/plugins/kwin4_effect_shapecorners.so' >/dev/null \
+  && [ "$(kreadconfig6 --file kwinrc --group Plugins --key kwin4_effect_shapecornersEnabled)" = true ] && on=1
+for v in 3 4; do
+  f=$HOME/.config/gtk-$v.0/gtk.css; src=$D/gtk$v.css
+  [ -f "$f" ] || continue
+  if [ $on = 0 ]; then grep -q 'TAHOE-CORNERS BEGIN' "$f" && sed -i '/TAHOE-CORNERS BEGIN/,/TAHOE-CORNERS END/d' "$f"; continue; fi
+  if grep -q 'TAHOE-CORNERS BEGIN' "$f"; then
+    cur=$(sed -n '/TAHOE-CORNERS BEGIN/,/TAHOE-CORNERS END/p' "$f")
+    [ "$cur" = "$(cat "$src")" ] && continue
+    sed -i '/TAHOE-CORNERS BEGIN/,/TAHOE-CORNERS END/d' "$f"
+  fi
+  printf '\n' >> "$f"; cat "$src" >> "$f"
+done

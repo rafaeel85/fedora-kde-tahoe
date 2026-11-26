@@ -9,7 +9,7 @@ BK="${1:-$(cat "$STATE/original-backup" 2>/dev/null || cat "$STATE/last-backup" 
 
 echo "==> Stopping Tahoe services"
 for u in tahoe-cc.service tahoe-menus.service tahoe-osd.service tahoe-bartint.service spotlight-search.service \
-         tahoe-health-sync.service konsole-hide-toolbars.path konsole-hide-toolbars.service; do
+         tahoe-health-sync.service konsole-hide-toolbars.path konsole-hide-toolbars.service tahoe-gtk-corners.path tahoe-gtk-corners.service; do
   systemctl --user disable --now "$u" >/dev/null 2>&1
   rm -f "$UNITS/$u"
 done
@@ -24,7 +24,8 @@ rm -rf "$LS"/{spotlight-tahoe,tahoe-cc,tahoe-menus,tahoe-osd,tahoe-bartint,tahoe
        "$LS"/applications/{local.spotlight.desktop,local.tahoecc.desktop,mac-trash.desktop,org.kde.konsole.desktop} \
        "$LS"/applications/local.dock-{1..9}.desktop \
        "$HOME/.config/fontconfig/conf.d/99-tahoe-rendering.conf" "$HOME/.config/plasma-workspace/env/wavetask.sh"
-rm -f "$BIN"/{spotlight-search,tahoe-cc,dock-number,konsole-hide-toolbars,systemsettings-stable,tahoe-health-check,tahoe-kirigami-tabs,tahoe-appearance,tahoe-corners,tahoe-konsole}
+rm -f "$BIN"/{spotlight-search,tahoe-cc,dock-number,konsole-hide-toolbars,systemsettings-stable,tahoe-health-check,tahoe-kirigami-tabs,tahoe-appearance,tahoe-corners,tahoe-gtk-corners,tahoe-konsole}
+for f in "$HOME"/.config/gtk-{3,4}.0/gtk.css; do [ -f "$f" ] && sed -i "/TAHOE-CORNERS BEGIN/,/TAHOE-CORNERS END/d" "$f"; done
 rm -rf "$LS"/plasma/desktoptheme/MacTahoe-Light-Clear "$LS"/aurorae/themes/MacTahoe-Light-Windows "$LS"/konsole/SequoiaGlassLight.{profile,colorscheme}
 rm -f "$LS"/icons/hicolor/scalable/places/tahoe-sb-*.svg
 

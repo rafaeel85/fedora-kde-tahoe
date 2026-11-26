@@ -27,6 +27,7 @@ gdbus call --session -d org.kde.KWin -o /KWin -m org.kde.KWin.reconfigure >/dev/
 [ -x "$HOME/.local/bin/tahoe-konsole" ] && "$HOME/.local/bin/tahoe-konsole" "$mode"
 # rounded corners + outline (KDE Rounded Corners effect, if installed)
 [ -x "$HOME/.local/bin/tahoe-corners" ] && gdbus call --session -d org.kde.KWin -o /Effects -m org.freedesktop.DBus.Properties.Get org.kde.kwin.Effects listOfEffects 2>/dev/null | grep -q kwin4_effect_shapecorners && "$HOME/.local/bin/tahoe-corners" "$mode"
+[ -x "$HOME/.local/bin/tahoe-gtk-corners" ] && "$HOME/.local/bin/tahoe-gtk-corners"
 /usr/libexec/plasma-changeicons "$ICONS" >/dev/null 2>&1
 # GTK 3/4 + portal + xsettingsd + Flatpak
 gsettings set org.gnome.desktop.interface gtk-theme "$GTK"

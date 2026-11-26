@@ -1,0 +1,5 @@
+[Unit]
+Description=Tahoe: keep GTK CSD windows square (Rounded Corners effect draws the corner)
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/tahoe-gtk-corners

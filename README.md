@@ -71,7 +71,9 @@ yay -S kwin-effects-better-blur-dx
 sudo dnf copr enable matinlotfali/KDE-Rounded-Corners
 sudo dnf install kwin-effect-roundcorners
 ```
-Other distros: see the project page. When the effect is installed, `tahoe-appearance` sets it up (radius 16 squircle, outline per appearance).
+Other distros: see the project page. When the effect is installed, `tahoe-appearance` sets it up (radius 16 squircle, outline per appearance) and switches the Tahoe
+window decorations and GTK/Firefox-style self-drawn window frames (`tahoe-gtk-corners`) to square edges, so only the effect draws
+the corner — no double arcs. Without the effect they keep their own rounded corners.
 The effect must match your KWin version, so update it together with Plasma.
 
 > Do **not** apply a *Global Theme* in System Settings: it replaces the menu bar, Dock, decoration and wallpaper. Use `tahoe-appearance` for Light/Dark.

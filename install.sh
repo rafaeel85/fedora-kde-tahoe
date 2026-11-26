@@ -194,6 +194,10 @@ cp "$C"/applications/*.desktop "$LS/applications/"; subst "$LS/applications"
 cp "$C"/icons/places/*.svg "$LS/icons/hicolor/scalable/places/"
 cp "$C"/konsole/* "$LS/konsole/"; cp "$C"/kxmlgui5/*.rc "$LS/kxmlgui5/konsole/"
 cp "$C/fontconfig/99-tahoe-rendering.conf" "$HOME/.config/fontconfig/conf.d/"
+mkdir -p "$LS/tahoe-overrides/gtk-corners"; cp "$C"/gtk-corners/*.css "$LS/tahoe-overrides/gtk-corners/"
+# KDE Rounded Corners installed -> configure it; tahoe-corners also squares the decorations + GTK CSD frames (no double arcs)
+if compgen -G '/usr/lib*/qt6/plugins/kwin/effects/plugins/kwin4_effect_shapecorners.so' >/dev/null \
+   || compgen -G '/usr/lib/*/qt6/plugins/kwin/effects/plugins/kwin4_effect_shapecorners.so' >/dev/null; then "$BIN/tahoe-corners" dark; fi
 cp "$C/plasma-env/wavetask.sh" "$HOME/.config/plasma-workspace/env/"; subst "$HOME/.config/plasma-workspace/env"
 mkdir -p "$HOME/.local/src/kirigami-tahoe"; rm -rf "$HOME/.local/src/kirigami-tahoe/patches"
 cp -r "$C/kirigami/patches" "$HOME/.local/src/kirigami-tahoe/"
@@ -279,7 +283,7 @@ say "Enabling Tahoe services"
 if [ "$SESSION" = 1 ]; then
 systemctl --user daemon-reload
 systemctl --user enable tahoe-cc.service tahoe-menus.service tahoe-osd.service tahoe-bartint.service spotlight-search.service \
-  tahoe-health-sync.service konsole-hide-toolbars.path >/dev/null 2>&1 || true
+  tahoe-health-sync.service konsole-hide-toolbars.path tahoe-gtk-corners.path >/dev/null 2>&1 || true
 fi
 "$BIN/tahoe-health-check" --sync
 kbuildsycoca6 >/dev/null 2>&1 || true
