@@ -10,6 +10,9 @@ k SecondOutlineThickness 1; k InactiveSecondOutlineThickness 1
 k OuterOutlineThickness 0; k InactiveOuterOutlineThickness 0
 # the effect's own shadow drew a dark arc at the top corners (over the decoration shadow) -> off
 k ShadowSize 0; k InactiveShadowSize 0
+# Tahoe helper windows (OSD, CC, menus, Spotlight, plasmashell popups) are borderless with transparent margins:
+# the effect outlined the whole window rect -> stray black lines beside the volume OSD. Exclude them.
+k Exclusions "local.tahoeosd,local.tahoecc,local.tahoemenus,local.spotlight,org.kde.plasmashell"
 if [ "$mode" = light ]; then
   # light: aurorae decorations are square (aurorae-square-corners.py) -> the effect draws the only edge: soft grey
   k OutlineColor 0,0,0; k InactiveOutlineColor 0,0,0; k ActiveOutlineAlpha 70; k InactiveOutlineAlpha 50
